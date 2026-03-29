@@ -296,6 +296,7 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
       <transition-group v-else name="step-fade" tag="div" style="display:flex;flex-direction:column;align-items:stretch;position:relative;">
         <template v-for="(step, i) in steps" :key="step.id">
           <step-block
+            :key="step.id"
             :step="step"
             :index="i"
             :total="steps.length"
@@ -304,7 +305,7 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
             @move="$emit('move', $event)"
             @delete="$emit('delete', step.id)"
           ></step-block>
-          <div v-if="i < steps.length - 1" class="connector">
+          <div v-if="i < steps.length - 1" :key="'c-' + step.id" class="connector">
             <div class="line"></div><span>↓</span><div class="line"></div>
           </div>
         </template>
