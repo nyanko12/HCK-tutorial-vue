@@ -11,8 +11,8 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 /* ── Toolbar ── */
 #toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
 #toolbar h1 { font-size: 15px; font-weight: 700; color: #1d6fd8; white-space: nowrap; }
-#tutorial-name { flex: 1; max-width: 260px; height: 32px; padding: 0 10px; border: 1px solid #e2e8f0; border-radius: 7px; font-size: 13px; outline: none; }
-#tutorial-name:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
+.tutorial-name-input { flex: 1; max-width: 260px; height: 32px; padding: 0 10px; border: 1px solid #e2e8f0; border-radius: 7px; font-size: 13px; outline: none; }
+.tutorial-name-input:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
 .spacer { flex: 1; }
 .btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, box-shadow 0.15s; white-space: nowrap; }
 .btn-outline { background: #fff; border: 1px solid #e2e8f0; color: #334155; }
@@ -26,45 +26,48 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 .btn-ghost-sm:disabled { opacity: 0.3; cursor: default; }
 
 /* ── Screen layout ── */
-#home-screen   { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #f8fafc; }
-#editor-screen { flex: 1; display: none; flex-direction: column; min-height: 0; }
+#app { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 
 /* ── Home Screen ── */
-#home-header { padding: 14px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; }
-#home-header h1 { font-size: 16px; font-weight: 700; color: #1d6fd8; }
-#home-body { flex: 1; padding: 32px; max-width: 680px; margin: 0 auto; width: 100%; }
-#home-body h2 { font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
-#project-list { display: flex; flex-direction: column; gap: 8px; }
-#home-new-btn { display: flex; align-items: center; gap: 8px; padding: 14px 16px; background: #eff6ff; border: 2px dashed #93c5fd; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: #1d4ed8; width: 100%; }
-#home-new-btn:hover { background: #dbeafe; }
-.proj-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
-.proj-card:hover { border-color: #93c5fd; }
+.home-screen { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #f8fafc; }
+.home-header { padding: 14px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; }
+.home-header h1 { font-size: 16px; font-weight: 700; color: #1d6fd8; }
+.home-body { flex: 1; padding: 32px; max-width: 680px; margin: 0 auto; width: 100%; }
+.home-body h2 { font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.project-list { display: flex; flex-direction: column; gap: 8px; }
+.home-new-btn { display: flex; align-items: center; gap: 8px; padding: 14px 16px; background: #eff6ff; border: 2px dashed #93c5fd; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: #1d4ed8; width: 100%; }
+.home-new-btn:hover { background: #dbeafe; }
+.proj-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; transition: border-color 0.15s; }
+.proj-card:hover { border-left-color: #3b82f6; border-top-color: #93c5fd; border-right-color: #93c5fd; border-bottom-color: #93c5fd; }
 .proj-card-icon { font-size: 22px; flex-shrink: 0; }
 .proj-card-body { flex: 1; min-width: 0; }
 .proj-card-name { font-size: 14px; font-weight: 600; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .proj-card-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
 .proj-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
-#home-footer { padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 8px; }
+.home-footer { padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 8px; }
+
+/* ── Editor Screen ── */
+.editor-screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
 /* ── Main 4-col ── */
-#main { display: flex; flex: 1; min-height: 0; }
+.main-cols { display: flex; flex: 1; min-height: 0; }
 
 /* ── Preview Pane ── */
-#preview-pane { min-width: 200px; max-width: calc(100vw - 600px); border-right: none; background: #fff; display: none; flex-direction: column; width: 420px; flex-shrink: 0; }
-#preview-resize-handle { width: 5px; flex-shrink: 0; cursor: col-resize; background: #e2e8f0; transition: background 0.15s; }
-#preview-resize-handle:hover, #preview-resize-handle.dragging { background: #93c5fd; }
+.preview-pane { min-width: 200px; max-width: calc(100vw - 600px); border-right: none; background: #fff; display: flex; flex-direction: column; width: 420px; flex-shrink: 0; }
+.preview-resize-handle { width: 5px; flex-shrink: 0; cursor: col-resize; background: #e2e8f0; transition: background 0.15s; }
+.preview-resize-handle:hover, .preview-resize-handle.dragging { background: #93c5fd; }
 .btn-active { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
-#preview-pane-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-#preview-pane-title { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; flex: 1; }
-#preview-filename { font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
-#preview-frame-wrap { flex: 1; min-height: 0; position: relative; }
-#preview-frame { width: 100%; height: 100%; border: none; display: block; }
-#preview-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #cbd5e1; font-size: 13px; text-align: center; padding: 20px; pointer-events: none; }
+.preview-pane-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.preview-pane-title { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; flex: 1; }
+.preview-filename { font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+.preview-frame-wrap { flex: 1; min-height: 0; position: relative; }
+.preview-frame { width: 100%; height: 100%; border: none; display: block; }
+.preview-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #cbd5e1; font-size: 13px; text-align: center; padding: 20px; pointer-events: none; }
 
 /* ── Palette ── */
-#palette { width: 210px; border-right: 1px solid #e2e8f0; background: #f8fafc; display: flex; flex-direction: column; flex-shrink: 0; }
-#palette-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
-#palette-items { padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+.palette { width: 210px; border-right: 1px solid #e2e8f0; background: #f8fafc; display: flex; flex-direction: column; flex-shrink: 0; }
+.palette-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+.palette-items { padding: 10px; display: flex; flex-direction: column; gap: 7px; }
 .palette-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 9px; border: 1px solid; cursor: pointer; transition: filter 0.1s; }
 .palette-item:hover { filter: brightness(0.95); }
 .palette-item span.icon { font-size: 16px; flex-shrink: 0; }
@@ -74,20 +77,23 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 .pi-highlight { background: #fefce8; border-color: #fde68a; color: #92400e; }
 .pi-wait-click { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
 .pi-wait-input { background: #faf5ff; border-color: #e9d5ff; color: #7e22ce; }
-#palette-hint { padding: 10px 12px; margin-top: auto; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+.palette-hint { padding: 10px 12px; margin-top: auto; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; line-height: 1.5; }
 
 /* ── Chain ── */
-#chain { flex: 1; overflow-y: auto; padding: 16px; }
-#chain-inner { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; align-items: stretch; }
-#empty-hint { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #cbd5e1; text-align: center; padding: 40px; }
-#empty-hint .arrow { font-size: 36px; margin-bottom: 8px; }
+.chain { flex: 1; overflow-y: auto; padding: 16px; }
+.chain-inner { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; align-items: stretch; position: relative; }
+.empty-hint { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; color: #cbd5e1; text-align: center; padding: 40px; }
+.empty-hint .arrow { font-size: 36px; margin-bottom: 8px; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; color: #cbd5e1; text-align: center; padding: 40px; }
+.empty-icon { font-size: 36px; margin-bottom: 8px; }
+.empty-text { font-size: 13px; }
 .connector { display: flex; flex-direction: column; align-items: center; padding: 2px 0; color: #cbd5e1; font-size: 11px; line-height: 1; }
 .connector .line { width: 1px; height: 8px; background: currentColor; }
 
 /* ── StepBlock ── */
-.step-block { border-radius: 10px; border: 2px solid; padding: 10px 12px; cursor: pointer; transition: box-shadow 0.15s, outline 0.1s; }
+.step-block { border-radius: 10px; border: 2px solid; padding: 10px 12px; cursor: pointer; transition: box-shadow 0.15s, outline 0.1s; border-left-width: 4px; }
 .step-block:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.step-block.selected { outline: 2.5px solid #1d6fd8; outline-offset: 2px; }
+.step-block.selected { outline: 2.5px solid #1d6fd8; outline-offset: 2px; border-left-color: #1d6fd8 !important; }
 .sb-message { background: #eff6ff; border-color: #bfdbfe; }
 .sb-highlight { background: #fefce8; border-color: #fde68a; }
 .sb-wait-click { background: #f0fdf4; border-color: #bbf7d0; }
@@ -103,11 +109,11 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 .sb-sel { font-size: 11px; font-family: monospace; color: #94a3b8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sb-actions { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
 
-/* ── Editor ── */
-#editor { width: 280px; border-left: 1px solid #e2e8f0; background: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
-#editor-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
-#editor-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex: 1; }
-#editor-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: #cbd5e1; text-align: center; padding: 20px; }
+/* ── Editor (Property Panel) ── */
+.prop-panel { width: 280px; border-left: 1px solid #e2e8f0; background: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+.prop-panel-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+.prop-panel-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex: 1; }
+.prop-panel-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: #cbd5e1; text-align: center; padding: 20px; }
 .field { display: flex; flex-direction: column; gap: 5px; }
 .field label { font-size: 11px; font-weight: 600; color: #64748b; }
 .field input, .field textarea { border: 1px solid #e2e8f0; border-radius: 7px; padding: 7px 10px; font-size: 13px; outline: none; font-family: inherit; resize: none; }
@@ -126,17 +132,17 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; }
 
 /* ── Preview modal ── */
-#preview-progress-wrap { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
-#preview-progress-bar { height: 100%; background: #1d6fd8; border-radius: 2px; transition: width 0.3s; }
-#preview-counter { font-size: 12px; color: #94a3b8; text-align: right; }
-#preview-chat { background: #f8fafc; border-radius: 10px; padding: 16px; min-height: 100px; }
+.preview-progress-wrap { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+.preview-progress-bar { height: 100%; background: #1d6fd8; border-radius: 2px; transition: width 0.3s; }
+.preview-counter { font-size: 12px; color: #94a3b8; text-align: right; }
+.preview-chat { background: #f8fafc; border-radius: 10px; padding: 16px; min-height: 100px; }
 .chat-row { display: flex; align-items: flex-start; gap: 10px; }
 .chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1d6fd8; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .chat-bubble { background: #fff; border-radius: 14px; border-top-left-radius: 3px; padding: 10px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); max-width: 360px; }
 .chat-msg { font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
 .chat-sel { font-size: 11px; color: #94a3b8; margin-top: 6px; font-family: monospace; }
 .chat-wait { font-size: 12px; color: #64748b; font-style: italic; margin-top: 8px; margin-left: 42px; }
-#preview-nav { display: flex; justify-content: space-between; align-items: center; }
+.preview-nav { display: flex; justify-content: space-between; align-items: center; }
 
 /* ── Export modal ── */
 .tab-bar { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; padding: 0 0 1px; margin-bottom: 2px; }
@@ -150,9 +156,9 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 .desc { font-size: 12px; color: #64748b; line-height: 1.5; }
 
 /* ── HTML Analyzer modal ── */
-#analyzer-html { width: 100%; min-height: 110px; border: 1px solid #e2e8f0; border-radius: 7px; padding: 8px 10px; font-size: 12px; font-family: monospace; resize: vertical; outline: none; }
-#analyzer-html:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
-#analyzer-results { display: flex; flex-direction: column; gap: 5px; max-height: 260px; overflow-y: auto; }
+.analyzer-html-ta { width: 100%; min-height: 110px; border: 1px solid #e2e8f0; border-radius: 7px; padding: 8px 10px; font-size: 12px; font-family: monospace; resize: vertical; outline: none; }
+.analyzer-html-ta:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
+.analyzer-results { display: flex; flex-direction: column; gap: 5px; max-height: 260px; overflow-y: auto; }
 .el-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: background 0.1s; }
 .el-row:hover { background: #f1f5f9; }
 .el-tag { font-size: 11px; background: #e2e8f0; border-radius: 4px; padding: 2px 6px; font-family: monospace; color: #475569; flex-shrink: 0; }
@@ -160,788 +166,356 @@ body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-seri
 .el-label { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .el-sel { font-size: 11px; font-family: monospace; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .el-use { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
+
+/* ── Vue Transitions ── */
+.screen-fade-enter-active, .screen-fade-leave-active { transition: opacity 0.15s ease; }
+.screen-fade-enter-from, .screen-fade-leave-to { opacity: 0; }
+.step-fade-enter-active, .step-fade-leave-active { transition: all 0.2s ease; }
+.step-fade-enter-from, .step-fade-leave-to { opacity: 0; transform: translateY(-8px); }
+.step-fade-leave-active { position: absolute; width: 100%; }
 </style>
 </head>
 <body>
 
-<!-- ── Home Screen ──────────────────────────────────────────── -->
-<div id="home-screen">
-  <div id="home-header">
-    <h1>🧩 チュートリアルメーカー</h1>
-  </div>
-  <div id="home-body">
-    <h2>プロジェクト</h2>
-    <div id="project-list"></div>
-    <div id="home-footer">
-      <button class="btn btn-outline" onclick="importProjectFromFile(function(p){ addOrUpdateProject(p); showEditor(p); })">📂 JSONから読み込む</button>
+<!-- ── Component Templates (x-template) ───────────────────── -->
+
+<script type="text/x-template" id="tmpl-home-screen">
+  <div class="home-screen">
+    <div class="home-header">
+      <h1>🧩 チュートリアルメーカー</h1>
+    </div>
+    <div class="home-body">
+      <h2>プロジェクト</h2>
+      <div class="project-list">
+        <button class="home-new-btn" @click="$emit('create')">＋ 新規プロジェクト</button>
+        <project-card
+          v-for="p in projects"
+          :key="p.id"
+          :project="p"
+          @open="$emit('open', p.id)"
+          @download="$emit('download', p.id)"
+          @delete="$emit('delete', p.id)"
+        ></project-card>
+      </div>
+      <div class="home-footer">
+        <button class="btn btn-outline" @click="$emit('import')">📂 JSONから読み込む</button>
+      </div>
     </div>
   </div>
-</div>
+</script>
 
-<!-- ── Editor Screen ─────────────────────────────────────────── -->
-<div id="editor-screen">
-
-<!-- ── Toolbar ────────────────────────────────────────────── -->
-<div id="toolbar">
-  <button class="btn btn-outline" onclick="showHome()">← ホームへ</button>
-  <input id="tutorial-name" type="text" placeholder="チュートリアル名を入力..." oninput="autoSave()">
-  <div class="spacer"></div>
-  <button class="btn btn-outline" onclick="saveCurrentProject()">💾 保存</button>
-  <button class="btn btn-outline" onclick="importProjectFromFile(function(p){ if(confirm('現在のプロジェクトを上書きしますか？')){ loadProjectToEditor(p); } })">📂 読み込み</button>
-  <button class="btn btn-outline" onclick="openAnalyzer()">🔍 HTML 解析</button>
-  <button id="preview-toggle-btn" class="btn btn-outline" onclick="togglePreviewPane()">👁 プレビュー</button>
-  <button class="btn btn-primary" onclick="openExport()">⬇ エクスポート</button>
-</div>
-
-<!-- ── Main ──────────────────────────────────────────────── -->
-<div id="main">
-  <!-- Preview Pane -->
-  <div id="preview-pane">
-    <div id="preview-pane-header">
-      <span id="preview-pane-title">🖥 プレビュー</span>
-      <span id="preview-filename" style="display:none"></span>
-      <button class="btn btn-outline" style="height:26px;padding:0 10px;font-size:12px" onclick="openPreviewFile()">📂 HTMLを開く</button>
-      <button class="btn btn-outline" id="preview-reset-btn" style="height:26px;padding:0 10px;font-size:12px;display:none" onclick="resetPreviewFrame()">↺ リセット</button>
+<script type="text/x-template" id="tmpl-project-card">
+  <div class="proj-card">
+    <div class="proj-card-icon">📄</div>
+    <div class="proj-card-body">
+      <div class="proj-card-name">{{ project.name || '無題' }}</div>
+      <div class="proj-card-meta">ステップ数: {{ project.steps.length }}　更新: {{ relativeDate }}</div>
     </div>
-    <div id="preview-frame-wrap">
-      <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
-      <div id="preview-empty">← HTMLファイルを開いてください</div>
+    <div class="proj-card-actions">
+      <button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px" @click="$emit('open')">開く</button>
+      <button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px" @click="$emit('download')">📥</button>
+      <button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px;color:#ef4444;border-color:#fca5a5" @click="$emit('delete')">🗑</button>
     </div>
   </div>
-  <div id="preview-resize-handle"></div>
-  <input type="file" id="preview-file-input" accept=".html,.css" multiple style="display:none" onchange="onPreviewFileSelected(event)">
-  <!-- Palette -->
-  <div id="palette">
-    <div id="palette-header">ブロック追加</div>
-    <div id="palette-items">
-      <div class="palette-item pi-message" onclick="addStep('message')">
+</script>
+
+<script type="text/x-template" id="tmpl-editor-screen">
+  <div class="editor-screen">
+    <div id="toolbar">
+      <button class="btn btn-outline" @click="$emit('go-home')">← ホームへ</button>
+      <input
+        class="tutorial-name-input"
+        type="text"
+        placeholder="チュートリアル名を入力..."
+        :value="currentProjectName"
+        @input="$emit('name-change', $event.target.value)"
+      >
+      <div class="spacer"></div>
+      <button class="btn btn-outline" @click="$emit('save')">💾 保存</button>
+      <button class="btn btn-outline" @click="$emit('import')">📂 読み込み</button>
+      <button class="btn btn-outline" @click="$emit('open-analyzer')">🔍 HTML 解析</button>
+      <button class="btn btn-outline" :class="{ 'btn-active': previewVisible }" @click="$emit('toggle-preview')">👁 プレビュー</button>
+      <button class="btn btn-primary" @click="$emit('open-export')">⬇ エクスポート</button>
+    </div>
+    <div class="main-cols">
+      <preview-pane
+        v-if="previewVisible"
+        :loaded-html="loadedHtml"
+        :filename="previewFilename"
+        @file-selected="$emit('file-selected', $event)"
+        @reset="$emit('reset-preview')"
+      ></preview-pane>
+      <palette-panel @add-step="$emit('add-step', $event)"></palette-panel>
+      <chain-panel
+        :steps="steps"
+        :selected-id="selectedId"
+        @select="$emit('select-step', $event)"
+        @move="$emit('move-step', $event)"
+        @delete="$emit('delete-step', $event)"
+      ></chain-panel>
+      <property-panel
+        :step="selectedStep"
+        @update="$emit('update-step', $event)"
+      ></property-panel>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-template" id="tmpl-palette-panel">
+  <div class="palette">
+    <div class="palette-header">ブロック追加</div>
+    <div class="palette-items">
+      <div class="palette-item pi-message" @click="$emit('add-step', 'message')">
         <span class="icon">💬</span>
         <div><div class="pi-label">メッセージ</div><div class="pi-desc">テキストを表示</div></div>
       </div>
-      <div class="palette-item pi-highlight" onclick="addStep('highlight')">
+      <div class="palette-item pi-highlight" @click="$emit('add-step', 'highlight')">
         <span class="icon">🔦</span>
         <div><div class="pi-label">ハイライト</div><div class="pi-desc">要素を強調表示</div></div>
       </div>
-      <div class="palette-item pi-wait-click" onclick="addStep('wait-click')">
+      <div class="palette-item pi-wait-click" @click="$emit('add-step', 'wait-click')">
         <span class="icon">👆</span>
         <div><div class="pi-label">クリック待ち</div><div class="pi-desc">要素クリックで進む</div></div>
       </div>
-      <div class="palette-item pi-wait-input" onclick="addStep('wait-input')">
+      <div class="palette-item pi-wait-input" @click="$emit('add-step', 'wait-input')">
         <span class="icon">⌨️</span>
         <div><div class="pi-label">入力待ち</div><div class="pi-desc">入力完了で進む</div></div>
       </div>
     </div>
-    <div id="palette-hint">クリックで末尾に追加。右パネルで内容を編集。</div>
+    <div class="palette-hint">クリックで末尾に追加。右パネルで内容を編集。</div>
   </div>
+</script>
 
-  <!-- Chain -->
-  <div id="chain">
-    <div id="chain-inner">
-      <div id="empty-hint"><div class="arrow">←</div><div>ブロックを追加してください</div></div>
+<script type="text/x-template" id="tmpl-chain-panel">
+  <div class="chain">
+    <div class="chain-inner">
+      <div v-if="steps.length === 0" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-text">左のパレットからブロックを追加してください</div>
+      </div>
+      <transition-group v-else name="step-fade" tag="div" style="display:flex;flex-direction:column;align-items:stretch;position:relative;">
+        <template v-for="(step, i) in steps" :key="step.id">
+          <step-block
+            :step="step"
+            :index="i"
+            :total="steps.length"
+            :selected="step.id === selectedId"
+            @select="$emit('select', step.id)"
+            @move="$emit('move', $event)"
+            @delete="$emit('delete', step.id)"
+          ></step-block>
+          <div v-if="i < steps.length - 1" class="connector">
+            <div class="line"></div><span>↓</span><div class="line"></div>
+          </div>
+        </template>
+      </transition-group>
     </div>
   </div>
+</script>
 
-  <!-- Editor -->
-  <div id="editor">
-    <div id="editor-header">プロパティ</div>
-    <div id="editor-empty">ステップを選択すると編集できます</div>
-    <div id="editor-body" style="display:none">
+<script type="text/x-template" id="tmpl-step-block">
+  <div class="step-block" :class="[typeConfig.blockCls, { selected: selected }]" @click="$emit('select')">
+    <div class="step-block-inner">
+      <span class="sb-icon">{{ typeConfig.icon }}</span>
+      <div class="sb-content">
+        <div class="sb-meta">
+          <span class="sb-idx">{{ index + 1 }}</span>
+          <span class="sb-type">{{ typeConfig.label }}</span>
+          <span v-if="step.label" class="sb-lbl">{{ step.label }}</span>
+        </div>
+        <div v-if="step.message" class="sb-msg">{{ step.message }}</div>
+        <div v-if="step.selector" class="sb-sel">{{ step.selector }}</div>
+      </div>
+      <div class="sb-actions">
+        <button class="btn-ghost-sm" :disabled="index === 0" @click.stop="$emit('move', { id: step.id, dir: -1 })">▲</button>
+        <button class="btn-ghost-sm" :disabled="index === total - 1" @click.stop="$emit('move', { id: step.id, dir: 1 })">▼</button>
+        <button class="btn-danger-ghost" @click.stop="$emit('delete')">✕</button>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-template" id="tmpl-property-panel">
+  <div class="prop-panel">
+    <div class="prop-panel-header">プロパティ</div>
+    <div v-if="!step" class="prop-panel-empty">ステップを選択すると編集できます</div>
+    <div v-else class="prop-panel-body">
       <div class="field">
         <label>ラベル（任意）</label>
-        <input id="ed-label" type="text" placeholder="例: ログインボタン" oninput="updateSelected('label', this.value)">
+        <input type="text" placeholder="例: ログインボタン" :value="step.label" @input="$emit('update', { field: 'label', val: $event.target.value })">
       </div>
       <div class="field">
         <label>メッセージ</label>
-        <textarea id="ed-message" placeholder="例: ここのIDを入力してね" oninput="updateSelected('message', this.value)"></textarea>
+        <textarea placeholder="例: ここのIDを入力してね" :value="step.message" @input="$emit('update', { field: 'message', val: $event.target.value })"></textarea>
       </div>
-      <div class="field" id="ed-selector-field">
+      <div v-if="needsSelector" class="field">
         <label>CSSセレクタ</label>
-        <input id="ed-selector" type="text" placeholder="例: #submit-button" class="mono" oninput="updateSelected('selector', this.value)">
+        <input type="text" placeholder="例: #submit-button" class="mono" :value="step.selector" @input="$emit('update', { field: 'selector', val: $event.target.value })">
         <span class="hint">DevToolsで要素を右クリック →<br>「Copy &gt; Copy selector」で取得できます。</span>
       </div>
     </div>
   </div>
-</div>
-</div><!-- /#editor-screen -->
-
-<!-- ── Preview Modal ────────────────────────────────────── -->
-<div id="preview-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)closePreview()">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">プレビュー</span>
-      <button class="modal-close" onclick="closePreview()">×</button>
-    </div>
-    <div class="modal-body">
-      <div id="preview-progress-wrap"><div id="preview-progress-bar"></div></div>
-      <div id="preview-counter"></div>
-      <div id="preview-chat"></div>
-      <div id="preview-nav">
-        <button class="btn btn-outline" id="preview-prev" onclick="previewPrev()">← 前へ</button>
-        <button class="btn btn-primary" id="preview-next" onclick="previewNext()">次へ →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── Export Modal ─────────────────────────────────────── -->
-<div id="export-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeExport()">
-  <div class="modal" style="max-height:80vh">
-    <div class="modal-header">
-      <span class="modal-title">エクスポート</span>
-      <button class="modal-close" onclick="closeExport()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="tab-bar">
-        <button class="tab active" onclick="switchTab('embed')">埋め込みコード</button>
-        <button class="tab" onclick="switchTab('json')">JSON</button>
-      </div>
-      <div id="tab-embed" class="tab-pane active">
-        <p class="desc">対象サイトの <code>&lt;/body&gt;</code> 直前にこのコードを貼り付けてください。</p>
-        <div class="code-wrap">
-          <pre id="embed-code"></pre>
-          <button class="btn btn-outline copy-btn" onclick="copyCode('embed-code')">📋 コピー</button>
-        </div>
-      </div>
-      <div id="tab-json" class="tab-pane">
-        <p class="desc">チュートリアルの定義JSONです。</p>
-        <div class="code-wrap">
-          <pre id="json-code"></pre>
-          <button class="btn btn-outline copy-btn" onclick="copyCode('json-code')">📋 コピー</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── HTML Analyzer Modal ──────────────────────────────── -->
-<div id="analyzer-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeAnalyzer()">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">🔍 HTML 解析 — 要素を自動検出</span>
-      <button class="modal-close" onclick="closeAnalyzer()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="field">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-          <label style="margin:0">対象サイトの HTML を貼り付けるか、ファイルを選択してください</label>
-          <button class="btn btn-outline" onclick="openAnalyzerFile()" style="height:28px; font-size:12px; padding:0 10px; flex-shrink:0; margin-left:8px;">📂 ファイルを開く</button>
-        </div>
-        <textarea id="analyzer-html" placeholder="<form id='login-form'>&#10;  <input type='text' name='username' placeholder='ユーザーID'>&#10;  <button type='submit'>ログイン</button>&#10;</form>"></textarea>
-      </div>
-      <button class="btn btn-primary" onclick="runAnalyzer()" style="align-self:flex-start">解析する</button>
-      <div id="analyzer-status" style="font-size:12px;color:#64748b"></div>
-      <div id="analyzer-results"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ─── State ────────────────────────────────────────────────
-var steps = []
-var selectedId = null
-var nextId = 1
-var previewIndex = 0
-var loadedHtml = ''
-var debounceTimer = null
-var cssObjectURLs = []
-var currentProjectId = null
-
-var TYPE_CONFIG = {
-  'message':    { label: 'メッセージ', icon: '💬', blockCls: 'sb-message',    needsSel: false },
-  'highlight':  { label: 'ハイライト', icon: '🔦', blockCls: 'sb-highlight',  needsSel: true  },
-  'wait-click': { label: 'クリック待ち', icon: '👆', blockCls: 'sb-wait-click', needsSel: true  },
-  'wait-input': { label: '入力待ち',   icon: '⌨️', blockCls: 'sb-wait-input', needsSel: true  },
-}
-
-// ─── Project Management ──────────────────────────────────
-function loadProjects() {
-  try { return JSON.parse(localStorage.getItem('tm_projects') || '[]') } catch(e) { return [] }
-}
-function saveProjects(projects) {
-  localStorage.setItem('tm_projects', JSON.stringify(projects))
-}
-function addOrUpdateProject(project) {
-  var projects = loadProjects()
-  var idx = projects.findIndex(function(p){ return p.id === project.id })
-  if (idx === -1) projects.unshift(project)
-  else projects[idx] = project
-  saveProjects(projects)
-}
-function autoSave() {
-  if (!currentProjectId) return
-  var projects = loadProjects()
-  var idx = projects.findIndex(function(p){ return p.id === currentProjectId })
-  if (idx === -1) return
-  projects[idx].steps = steps
-  projects[idx].nextId = nextId
-  projects[idx].name = document.getElementById('tutorial-name').value
-  projects[idx].updatedAt = Date.now()
-  saveProjects(projects)
-  localStorage.setItem('tm_last_project_id', currentProjectId)
-}
-function downloadProject(project) {
-  var json = JSON.stringify(project, null, 2)
-  var blob = new Blob([json], { type: 'application/json' })
-  var a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-  a.download = (project.name || 'project') + '.json'
-  a.click()
-  URL.revokeObjectURL(a.href)
-}
-function saveCurrentProject() {
-  autoSave()
-  var projects = loadProjects()
-  var project = projects.find(function(p){ return p.id === currentProjectId })
-  if (project) downloadProject(project)
-}
-function importProjectFromFile(onLoaded) {
-  var input = document.createElement('input')
-  input.type = 'file'
-  input.accept = '.json'
-  input.onchange = function(e) {
-    var file = e.target.files[0]
-    if (!file) return
-    var reader = new FileReader()
-    reader.onload = function(ev) {
-      try {
-        var data = JSON.parse(ev.target.result)
-        if (!data.id || !Array.isArray(data.steps)) { alert('不正なJSONファイルです'); return }
-        onLoaded(data)
-      } catch(err) { alert('JSONの読み込みに失敗しました') }
-    }
-    reader.readAsText(file)
-  }
-  input.click()
-}
-function formatRelativeDate(ts) {
-  var diff = Math.floor((Date.now() - ts) / 1000)
-  if (diff < 60) return 'たった今'
-  if (diff < 3600) return Math.floor(diff/60) + '分前'
-  if (diff < 86400) return Math.floor(diff/3600) + '時間前'
-  return Math.floor(diff/86400) + '日前'
-}
-function renderProjectList() {
-  var list = document.getElementById('project-list')
-  var projects = loadProjects()
-  var html = '<button id="home-new-btn" onclick="createNewProject()">＋ 新規プロジェクト</button>'
-  projects.forEach(function(p) {
-    html += '<div class="proj-card">'
-    html += '<div class="proj-card-icon">📄</div>'
-    html += '<div class="proj-card-body">'
-    html += '<div class="proj-card-name">' + esc(p.name || '無題') + '</div>'
-    html += '<div class="proj-card-meta">ステップ数: ' + p.steps.length + '　更新: ' + formatRelativeDate(p.updatedAt) + '</div>'
-    html += '</div>'
-    html += '<div class="proj-card-actions">'
-    html += '<button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px" onclick="openProject(\'' + p.id + '\')">開く</button>'
-    html += '<button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px" onclick="downloadProjectById(\'' + p.id + '\')">📥</button>'
-    html += '<button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px;color:#ef4444;border-color:#fca5a5" onclick="deleteProject(\'' + p.id + '\')">🗑</button>'
-    html += '</div></div>'
-  })
-  list.innerHTML = html
-}
-function showHome() {
-  autoSave()
-  renderProjectList()
-  document.getElementById('home-screen').style.display = 'flex'
-  document.getElementById('editor-screen').style.display = 'none'
-}
-function showEditor(project) {
-  loadProjectToEditor(project)
-  document.getElementById('home-screen').style.display = 'none'
-  document.getElementById('editor-screen').style.display = 'flex'
-}
-function loadProjectToEditor(project) {
-  currentProjectId = project.id
-  steps = project.steps ? project.steps.slice() : []
-  nextId = project.nextId || 1
-  selectedId = null
-  document.getElementById('tutorial-name').value = project.name || ''
-  renderChain()
-  renderEditor()
-  loadedHtml = ''
-  cssObjectURLs.forEach(function(u){ URL.revokeObjectURL(u) })
-  cssObjectURLs = []
-  var iframe = document.getElementById('preview-frame')
-  iframe.srcdoc = ''
-  document.getElementById('preview-empty').style.display = 'flex'
-  document.getElementById('preview-filename').style.display = 'none'
-  document.getElementById('preview-reset-btn').style.display = 'none'
-  document.getElementById('preview-pane').style.display = 'none'
-  document.getElementById('preview-toggle-btn').classList.remove('btn-active')
-  localStorage.setItem('tm_last_project_id', project.id)
-}
-function createNewProject() {
-  var name = prompt('プロジェクト名を入力してください', '新しいチュートリアル')
-  if (name === null) return
-  var project = {
-    id: 'proj_' + Date.now(),
-    name: name.trim() || '無題',
-    description: '',
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    steps: [],
-    nextId: 1
-  }
-  addOrUpdateProject(project)
-  showEditor(project)
-}
-function openProject(id) {
-  var projects = loadProjects()
-  var project = projects.find(function(p){ return p.id === id })
-  if (project) showEditor(project)
-}
-function downloadProjectById(id) {
-  var projects = loadProjects()
-  var project = projects.find(function(p){ return p.id === id })
-  if (project) downloadProject(project)
-}
-function deleteProject(id) {
-  if (!confirm('このプロジェクトを削除しますか？')) return
-  var projects = loadProjects().filter(function(p){ return p.id !== id })
-  saveProjects(projects)
-  renderProjectList()
-}
-
-// ─── Step CRUD ────────────────────────────────────────────
-function addStep(type) {
-  var step = { id: String(nextId++), type: type, label: '', message: '', selector: '' }
-  steps.push(step)
-  selectedId = step.id
-  renderChain()
-  renderEditor()
-  updatePreview()
-  autoSave()
-}
-
-function deleteStep(id) {
-  steps = steps.filter(function(s){ return s.id !== id })
-  if (selectedId === id) { selectedId = null }
-  renderChain()
-  renderEditor()
-  updatePreview()
-  autoSave()
-}
-
-function moveStep(id, dir) {
-  var i = steps.findIndex(function(s){ return s.id === id })
-  var j = i + dir
-  if (j < 0 || j >= steps.length) return
-  var tmp = steps[i]; steps[i] = steps[j]; steps[j] = tmp
-  renderChain()
-  updatePreview()
-  autoSave()
-}
-
-function selectStep(id) {
-  selectedId = id
-  renderChain()
-  renderEditor()
-}
-
-function updateSelected(field, val) {
-  if (!selectedId) return
-  var s = steps.find(function(s){ return s.id === selectedId })
-  if (s) { s[field] = val }
-  debouncedUpdatePreview()
-}
-
-// ─── Render Chain ─────────────────────────────────────────
-function renderChain() {
-  var inner = document.getElementById('chain-inner')
-  inner.innerHTML = ''
-
-  if (steps.length === 0) {
-    inner.innerHTML = '<div id="empty-hint"><div class="arrow">←</div><div>ブロックを追加してください</div></div>'
-    return
-  }
-
-  steps.forEach(function(step, i) {
-    var cfg = TYPE_CONFIG[step.type]
-    var selected = step.id === selectedId
-
-    var block = document.createElement('div')
-    block.className = 'step-block ' + cfg.blockCls + (selected ? ' selected' : '')
-    block.onclick = function() { selectStep(step.id) }
-
-    block.innerHTML = [
-      '<div class="step-block-inner">',
-        '<span class="sb-icon">' + cfg.icon + '</span>',
-        '<div class="sb-content">',
-          '<div class="sb-meta">',
-            '<span class="sb-idx">' + (i+1) + '</span>',
-            '<span class="sb-type">' + cfg.label + '</span>',
-            step.label ? '<span class="sb-lbl">' + esc(step.label) + '</span>' : '',
-          '</div>',
-          step.message ? '<div class="sb-msg">' + esc(step.message) + '</div>' : '',
-          step.selector ? '<div class="sb-sel">' + esc(step.selector) + '</div>' : '',
-        '</div>',
-        '<div class="sb-actions">',
-          '<button class="btn-ghost-sm" onclick="event.stopPropagation();moveStep(\'' + step.id + '\',-1)" ' + (i===0?'disabled':'') + '>▲</button>',
-          '<button class="btn-ghost-sm" onclick="event.stopPropagation();moveStep(\'' + step.id + '\',1)" ' + (i===steps.length-1?'disabled':'') + '>▼</button>',
-          '<button class="btn-danger-ghost" onclick="event.stopPropagation();deleteStep(\'' + step.id + '\')">✕</button>',
-        '</div>',
-      '</div>'
-    ].join('')
-
-    inner.appendChild(block)
-
-    if (i < steps.length - 1) {
-      var conn = document.createElement('div')
-      conn.className = 'connector'
-      conn.innerHTML = '<div class="line"></div><span>↓</span><div class="line"></div>'
-      inner.appendChild(conn)
-    }
-  })
-}
-
-// ─── Render Editor ────────────────────────────────────────
-function renderEditor() {
-  var empty = document.getElementById('editor-empty')
-  var body = document.getElementById('editor-body')
-  var step = steps.find(function(s){ return s.id === selectedId })
-
-  if (!step) {
-    empty.style.display = 'flex'
-    body.style.display = 'none'
-    return
-  }
-
-  empty.style.display = 'none'
-  body.style.display = 'flex'
-
-  document.getElementById('ed-label').value = step.label || ''
-  document.getElementById('ed-message').value = step.message || ''
-  document.getElementById('ed-selector').value = step.selector || ''
-
-  var needsSel = TYPE_CONFIG[step.type].needsSel
-  document.getElementById('ed-selector-field').style.display = needsSel ? 'flex' : 'none'
-}
-
-// ─── Preview ──────────────────────────────────────────────
-function togglePreviewPane() {
-  var pane = document.getElementById('preview-pane')
-  var btn = document.getElementById('preview-toggle-btn')
-  var visible = pane.style.display === 'flex'
-  pane.style.display = visible ? 'none' : 'flex'
-  btn.classList.toggle('btn-active', !visible)
-}
-function openPreview() {
-  previewIndex = 0
-  renderPreview()
-  document.getElementById('preview-modal').style.display = 'flex'
-}
-function closePreview() {
-  document.getElementById('preview-modal').style.display = 'none'
-}
-function previewPrev() { if (previewIndex > 0) { previewIndex--; renderPreview() } }
-function previewNext() {
-  if (previewIndex < steps.length - 1) { previewIndex++; renderPreview() }
-  else closePreview()
-}
-function renderPreview() {
-  var total = steps.length
-  if (total === 0) {
-    document.getElementById('preview-chat').innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px">ステップがありません</p>'
-    document.getElementById('preview-counter').textContent = ''
-    document.getElementById('preview-progress-bar').style.width = '0%'
-    return
-  }
-  var step = steps[previewIndex]
-  var isWaiting = step.type === 'wait-click' || step.type === 'wait-input'
-
-  document.getElementById('preview-counter').textContent = (previewIndex + 1) + ' / ' + total
-  document.getElementById('preview-progress-bar').style.width = ((previewIndex + 1) / total * 100) + '%'
-  document.getElementById('preview-prev').disabled = previewIndex === 0
-  document.getElementById('preview-next').textContent = previewIndex === total - 1 ? '完了 ✓' : '次へ →'
-
-  var waitMsg = ''
-  if (isWaiting) {
-    waitMsg = '<div class="chat-wait">' + (step.type === 'wait-click' ? '👆 要素をクリックしてください（プレビューでは次へで進めます）' : '⌨️ 入力してください（プレビューでは次へで進めます）') + '</div>'
-  }
-
-  document.getElementById('preview-chat').innerHTML = [
-    '<div class="chat-row">',
-      '<div class="chat-avatar">ガイド</div>',
-      '<div class="chat-bubble">',
-        '<div class="chat-msg">' + esc(step.message || '（メッセージ未設定）') + '</div>',
-        step.selector ? '<div class="chat-sel">対象: ' + esc(step.selector) + '</div>' : '',
-      '</div>',
-    '</div>',
-    waitMsg
-  ].join('')
-}
-
-// ─── Export ───────────────────────────────────────────────
-function openExport() {
-  var name = document.getElementById('tutorial-name').value
-  var tutorial = { id: 'tutorial-1', name: name, description: '', steps: steps }
-  var json = JSON.stringify(tutorial, null, 2)
-
-  var playerCode = document.getElementById('tp-player-source').textContent.trim()
-
-  var embed = '<!-- チュートリアルPlayer（インライン） -->\n<script>\n' + playerCode + '\n<\/script>\n\n<!-- チュートリアル定義 -->\n<script>\nTutorialPlayer.init(' + json + ');\n<\/script>'
-
-  document.getElementById('json-code').textContent = json
-  document.getElementById('embed-code').textContent = embed
-
-  switchTab('embed')
-  document.getElementById('export-modal').style.display = 'flex'
-}
-function closeExport() { document.getElementById('export-modal').style.display = 'none' }
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(function(t, i) {
-    var names = ['embed', 'json']
-    t.classList.toggle('active', names[i] === name)
-  })
-  document.getElementById('tab-embed').classList.toggle('active', name === 'embed')
-  document.getElementById('tab-json').classList.toggle('active', name === 'json')
-}
-function copyCode(id) {
-  var text = document.getElementById(id).textContent
-  navigator.clipboard.writeText(text).then(function() {
-    alert('コピーしました！')
-  })
-}
-
-// ─── HTML Analyzer ────────────────────────────────────────
-function openAnalyzer() {
-  if (loadedHtml) {
-    document.getElementById('analyzer-html').value = loadedHtml
-  }
-  document.getElementById('analyzer-modal').style.display = 'flex'
-}
-function closeAnalyzer() { document.getElementById('analyzer-modal').style.display = 'none' }
-function openAnalyzerFile() {
-  var input = document.createElement('input')
-  input.type = 'file'
-  input.accept = '.html'
-  input.onchange = function(e) {
-    var file = e.target.files[0]
-    if (!file) return
-    var reader = new FileReader()
-    reader.onload = function(ev) {
-      document.getElementById('analyzer-html').value = ev.target.result
-    }
-    reader.readAsText(file)
-  }
-  input.click()
-}
-
-function runAnalyzer() {
-  var html = document.getElementById('analyzer-html').value
-  if (!html.trim()) return
-
-  var parser = new DOMParser()
-  var doc = parser.parseFromString(html, 'text/html')
-  var targets = doc.querySelectorAll("button, input, select, textarea, a[href], [role='button']")
-  var results = []
-
-  targets.forEach(function(el) {
-    var sel = buildSelectorFromEl(el)
-    var tag = el.tagName.toLowerCase()
-    var inputType = el.getAttribute('type') || ''
-    var text = (el.textContent || '').trim().slice(0, 40)
-      || el.getAttribute('placeholder')
-      || el.getAttribute('aria-label')
-      || el.getAttribute('name')
-      || el.getAttribute('value')
-      || '(テキストなし)'
-    var tagLabel = inputType ? tag + '[type=' + inputType + ']' : tag
-    results.push({ tag: tagLabel, text: text, selector: sel })
-  })
-
-  var statusEl = document.getElementById('analyzer-status')
-  var resultsEl = document.getElementById('analyzer-results')
-
-  if (results.length === 0) {
-    statusEl.textContent = 'インタラクティブな要素が見つかりませんでした'
-    resultsEl.innerHTML = ''
-    return
-  }
-
-  statusEl.textContent = results.length + ' 件の要素が見つかりました — クリックでセレクタを現在のステップに挿入'
-  resultsEl.innerHTML = results.map(function(r) {
-    return [
-      '<div class="el-row" onclick="useSelector(\'' + r.selector.replace(/'/g, "\\'") + '\')">',
-        '<span class="el-tag">' + esc(r.tag) + '</span>',
-        '<div class="el-text">',
-          '<div class="el-label">' + esc(r.text) + '</div>',
-          '<div class="el-sel">' + esc(r.selector) + '</div>',
-        '</div>',
-        '<span class="el-use">→ 使う</span>',
-      '</div>'
-    ].join('')
-  }).join('')
-}
-
-function buildSelectorFromEl(el) {
-  if (el.id) return '#' + el.id
-  var name = el.getAttribute('name')
-  if (name) return '[name="' + name + '"]'
-
-  var parts = []
-  var cur = el
-  while (cur && cur.tagName && cur.tagName.toLowerCase() !== 'body') {
-    var tag = cur.tagName.toLowerCase()
-    if (cur.id) { parts.unshift('#' + cur.id); break }
-    var siblings = Array.prototype.filter.call(cur.parentElement ? cur.parentElement.children : [], function(c) { return c.tagName === cur.tagName })
-    if (siblings.length > 1) {
-      var idx = siblings.indexOf(cur) + 1
-      parts.unshift(tag + ':nth-of-type(' + idx + ')')
-    } else {
-      parts.unshift(tag)
-    }
-    cur = cur.parentElement
-  }
-  return parts.join(' > ')
-}
-
-function useSelector(selector) {
-  var step = steps.find(function(s){ return s.id === selectedId })
-  if (!step) {
-    alert('先にステップを選択してください')
-    return
-  }
-  step.selector = selector
-  document.getElementById('ed-selector').value = selector
-  renderChain()
-  closeAnalyzer()
-}
-
-// ─── Utils ────────────────────────────────────────────────
-function esc(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-}
-
-// ─── Preview Pane ─────────────────────────────────────────
-function openPreviewFile() {
-  document.getElementById('preview-file-input').click()
-}
-
-function onPreviewFileSelected(event) {
-  var files = Array.from(event.target.files)
-  if (!files.length) return
-  var htmlFile = files.find(function(f) { return /\.html?$/i.test(f.name) })
-  var cssFiles = files.filter(function(f) { return /\.css$/i.test(f.name) })
-  if (!htmlFile) return
-
-  // 古いBlob URLを解放して新しいものを作成
-  cssObjectURLs.forEach(function(url) { URL.revokeObjectURL(url) })
-  cssObjectURLs = []
-  var cssMap = {}
-  cssFiles.forEach(function(cssFile) {
-    var url = URL.createObjectURL(cssFile)
-    cssObjectURLs.push(url)
-    cssMap[cssFile.name] = url
-  })
-
-  var reader = new FileReader()
-  reader.onload = function(e) {
-    var html = e.target.result
-
-    // <link href="..."> の相対パスをBlob URLに差し替え
-    if (cssFiles.length > 0) {
-      html = html.replace(/<link([^>]*?)href=(["'])([^"']*?)\2([^>]*?)>/gi, function(match, before, quote, href, after) {
-        var filename = href.split('/').pop().split('?')[0]
-        if (cssMap[filename]) {
-          return '<link' + before + 'href=' + quote + cssMap[filename] + quote + after + '>'
-        }
-        return match
-      })
-    }
-
-    var playerCode = document.getElementById('tp-player-source').textContent.trim()
-    var injection = '<script>\n' + playerCode + '\n\nwindow.addEventListener(\'message\', function(e) {\n  if (!e.data || e.data.type !== \'tp-update\') return;\n  if (window.TutorialPlayer) {\n    window.TutorialPlayer.init(e.data.config);\n  }\n});\n<\/script>'
-    var modified = html.replace(/<\/body>/i, injection + '\n</body>')
-    if (modified === html) { modified = html + injection }
-    loadedHtml = modified
-    var iframe = document.getElementById('preview-frame')
-    iframe.srcdoc = loadedHtml
-    document.getElementById('preview-empty').style.display = 'none'
-    var label = htmlFile.name + (cssFiles.length ? ' +' + cssFiles.length + 'CSS' : '')
-    document.getElementById('preview-filename').textContent = label
-    document.getElementById('preview-filename').style.display = 'inline'
-    document.getElementById('preview-reset-btn').style.display = 'inline-flex'
-    event.target.value = ''
-    setTimeout(updatePreview, 600)
-  }
-  reader.readAsText(htmlFile)
-}
-
-function resetPreviewFrame() {
-  if (!loadedHtml) return
-  var iframe = document.getElementById('preview-frame')
-  iframe.srcdoc = ''
-  setTimeout(function() {
-    iframe.srcdoc = loadedHtml
-    setTimeout(updatePreview, 600)
-  }, 50)
-}
-
-function updatePreview() {
-  if (!loadedHtml) return
-  var iframe = document.getElementById('preview-frame')
-  if (!iframe || !iframe.contentWindow) return
-  var name = document.getElementById('tutorial-name').value
-  iframe.contentWindow.postMessage({
-    type: 'tp-update',
-    config: { id: 'tutorial-1', name: name, description: '', steps: steps }
-  }, '*')
-}
-
-function debounce(fn, delay) {
-  return function() {
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(fn, delay)
-  }
-}
-var debouncedUpdatePreview = debounce(function(){ updatePreview(); autoSave(); }, 300)
-
-// ─── Preview Pane Resize ──────────────────────────────────
-;(function() {
-  var handle = document.getElementById('preview-resize-handle')
-  var pane   = document.getElementById('preview-pane')
-  var dragging = false, startX = 0
-
-  handle.addEventListener('mousedown', function(e) {
-    if (pane.style.display === 'none') return
-    dragging = true
-    startX = pane.getBoundingClientRect().left
-    handle.classList.add('dragging')
-    document.body.style.cursor = 'col-resize'
-    document.body.style.userSelect = 'none'
-    document.getElementById('preview-frame').style.pointerEvents = 'none'
-    e.preventDefault()
-  })
-
-  document.addEventListener('mousemove', function(e) {
-    if (!dragging) return
-    var w = Math.max(200, Math.min(e.clientX - startX, window.innerWidth - 560))
-    pane.style.width = w + 'px'
-  })
-
-  document.addEventListener('mouseup', function() {
-    if (!dragging) return
-    dragging = false
-    handle.classList.remove('dragging')
-    document.body.style.cursor = ''
-    document.body.style.userSelect = ''
-    document.getElementById('preview-frame').style.pointerEvents = ''
-  })
-})()
-
-// ─── App Init ────────────────────────────────────────────
-;(function() {
-  var projects = loadProjects()
-  var lastId = localStorage.getItem('tm_last_project_id')
-  var lastProject = lastId ? projects.find(function(p){ return p.id === lastId }) : null
-  if (lastProject) {
-    showEditor(lastProject)
-  } else {
-    renderProjectList()
-  }
-})()
 </script>
+
+<script type="text/x-template" id="tmpl-preview-pane">
+  <div class="preview-pane" ref="paneEl">
+    <div class="preview-pane-header">
+      <span class="preview-pane-title">🖥 プレビュー</span>
+      <span v-if="filename" class="preview-filename">{{ filename }}</span>
+      <button class="btn btn-outline" style="height:26px;padding:0 10px;font-size:12px" @click="openFile">📂 HTMLを開く</button>
+      <button v-if="filename" class="btn btn-outline" style="height:26px;padding:0 10px;font-size:12px" @click="$emit('reset')">↺ リセット</button>
+    </div>
+    <div class="preview-frame-wrap">
+      <iframe class="preview-frame" ref="iframeEl" sandbox="allow-scripts allow-same-origin"></iframe>
+      <div v-if="!filename" class="preview-empty">← HTMLファイルを開いてください</div>
+    </div>
+  </div>
+  <div class="preview-resize-handle" ref="handleEl"></div>
+  <input type="file" ref="fileInputEl" accept=".html,.css" multiple style="display:none" @change="$emit('file-selected', $event)">
+</script>
+
+<!-- ── Root template ──────────────────────────────────────── -->
+<script type="text/x-template" id="tmpl-root">
+  <div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+    <transition name="screen-fade" mode="out-in">
+      <home-screen
+        v-if="currentScreen === 'home'"
+        :key="'home'"
+        :projects="projects"
+        @create="createNewProject"
+        @open="openProject"
+        @download="downloadProjectById"
+        @delete="deleteProject"
+        @import="importProjectToHome"
+      ></home-screen>
+      <editor-screen
+        v-else
+        :key="'editor'"
+        :steps="steps"
+        :selected-id="selectedId"
+        :selected-step="selectedStep"
+        :loaded-html="loadedHtml"
+        :preview-filename="previewFilename"
+        :current-project-name="currentProjectName"
+        :preview-visible="previewPaneVisible"
+        @go-home="showHome"
+        @save="saveCurrentProject"
+        @import="handleEditorImport"
+        @open-export="openExport"
+        @open-analyzer="openAnalyzer"
+        @toggle-preview="togglePreviewPane"
+        @name-change="handleNameChange"
+        @add-step="addStep"
+        @select-step="selectStep"
+        @move-step="handleMoveStep"
+        @delete-step="deleteStep"
+        @update-step="handleUpdateStep"
+        @file-selected="onPreviewFileSelected"
+        @reset-preview="resetPreviewFrame"
+      ></editor-screen>
+    </transition>
+
+    <!-- Preview Modal -->
+    <div v-if="showPreviewModal" class="modal-bg" @click.self="showPreviewModal = false">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">プレビュー</span>
+          <button class="modal-close" @click="showPreviewModal = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="preview-progress-wrap"><div class="preview-progress-bar" :style="{ width: previewProgressPct + '%' }"></div></div>
+          <div class="preview-counter">{{ previewIndex + 1 }} / {{ steps.length }}</div>
+          <div class="preview-chat">
+            <div v-if="steps.length === 0" style="color:#94a3b8;text-align:center;padding:20px">ステップがありません</div>
+            <template v-else>
+              <div class="chat-row">
+                <div class="chat-avatar">ガイド</div>
+                <div class="chat-bubble">
+                  <div class="chat-msg">{{ steps[previewIndex].message || '（メッセージ未設定）' }}</div>
+                  <div v-if="steps[previewIndex].selector" class="chat-sel">対象: {{ steps[previewIndex].selector }}</div>
+                </div>
+              </div>
+              <div v-if="steps[previewIndex].type === 'wait-click'" class="chat-wait">👆 要素をクリックしてください（プレビューでは次へで進めます）</div>
+              <div v-if="steps[previewIndex].type === 'wait-input'" class="chat-wait">⌨️ 入力してください（プレビューでは次へで進めます）</div>
+            </template>
+          </div>
+          <div class="preview-nav">
+            <button class="btn btn-outline" :disabled="previewIndex === 0" @click="previewIndex--">← 前へ</button>
+            <button class="btn btn-primary" @click="previewNext">{{ previewIndex === steps.length - 1 ? '完了 ✓' : '次へ →' }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div v-if="showExportModal" class="modal-bg" @click.self="showExportModal = false">
+      <div class="modal" style="max-height:80vh">
+        <div class="modal-header">
+          <span class="modal-title">エクスポート</span>
+          <button class="modal-close" @click="showExportModal = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="tab-bar">
+            <button class="tab" :class="{ active: exportTab === 'embed' }" @click="exportTab = 'embed'">埋め込みコード</button>
+            <button class="tab" :class="{ active: exportTab === 'json' }" @click="exportTab = 'json'">JSON</button>
+          </div>
+          <div class="tab-pane" :class="{ active: exportTab === 'embed' }">
+            <p class="desc">対象サイトの &lt;/body&gt; 直前にこのコードを貼り付けてください。</p>
+            <div class="code-wrap">
+              <pre>{{ exportEmbed }}</pre>
+              <button class="btn btn-outline copy-btn" @click="copyText(exportEmbed)">📋 コピー</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding-top:4px;border-top:1px solid #e2e8f0;margin-top:4px;">
+              <button class="btn btn-primary" @click="injectToFile">📂 HTMLファイルに直接書き込む</button>
+              <span style="font-size:11px;color:#94a3b8;">Chrome / Edge のみ対応（File System Access API）</span>
+            </div>
+          </div>
+          <div class="tab-pane" :class="{ active: exportTab === 'json' }">
+            <p class="desc">チュートリアルの定義JSONです。</p>
+            <div class="code-wrap">
+              <pre>{{ exportJson }}</pre>
+              <button class="btn btn-outline copy-btn" @click="copyText(exportJson)">📋 コピー</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analyzer Modal -->
+    <div v-if="showAnalyzerModal" class="modal-bg" @click.self="showAnalyzerModal = false">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">🔍 HTML 解析 — 要素を自動検出</span>
+          <button class="modal-close" @click="showAnalyzerModal = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+              <label style="margin:0">対象サイトの HTML を貼り付けるか、ファイルを選択してください</label>
+              <button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px;flex-shrink:0;margin-left:8px;" @click="openAnalyzerFile">📂 ファイルを開く</button>
+            </div>
+            <textarea class="analyzer-html-ta" v-model="analyzerHtml" placeholder="HTMLをここに貼り付け..."></textarea>
+          </div>
+          <button class="btn btn-primary" style="align-self:flex-start" @click="runAnalyzer">解析する</button>
+          <div v-if="analyzerStatus" style="font-size:12px;color:#64748b">{{ analyzerStatus }}</div>
+          <div class="analyzer-results">
+            <div v-for="r in analyzerResults" :key="r.selector" class="el-row" @click="useSelector(r.selector)">
+              <span class="el-tag">{{ r.tag }}</span>
+              <div class="el-text">
+                <div class="el-label">{{ r.text }}</div>
+                <div class="el-sel">{{ r.selector }}</div>
+              </div>
+              <span class="el-use">→ 使う</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<!-- ── App mount point ────────────────────────────────────── -->
+<div id="app"></div>
 
 <script type="text/plain" id="tp-player-source">
 (function () {
@@ -1459,6 +1033,653 @@ var debouncedUpdatePreview = debounce(function(){ updatePreview(); autoSave(); }
 
   window.TutorialPlayer = { init: init };
 }());
+</script>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script>
+const { createApp, ref, computed, watch, onMounted, nextTick } = Vue
+
+// ── TYPE_CONFIG ────────────────────────────────────────────
+const TYPE_CONFIG = {
+  'message':    { label: 'メッセージ',  icon: '💬', blockCls: 'sb-message',    needsSel: false },
+  'highlight':  { label: 'ハイライト',  icon: '🔦', blockCls: 'sb-highlight',  needsSel: true  },
+  'wait-click': { label: 'クリック待ち',icon: '👆', blockCls: 'sb-wait-click', needsSel: true  },
+  'wait-input': { label: '入力待ち',    icon: '⌨️', blockCls: 'sb-wait-input', needsSel: true  },
+}
+
+// ── Component definitions ──────────────────────────────────
+
+const ProjectCardDef = {
+  template: '#tmpl-project-card',
+  props: { project: Object },
+  emits: ['open', 'download', 'delete'],
+  computed: {
+    relativeDate() {
+      const diff = Math.floor((Date.now() - this.project.updatedAt) / 1000)
+      if (diff < 60) return 'たった今'
+      if (diff < 3600) return Math.floor(diff/60) + '分前'
+      if (diff < 86400) return Math.floor(diff/3600) + '時間前'
+      return Math.floor(diff/86400) + '日前'
+    }
+  }
+}
+
+const HomeScreenDef = {
+  template: '#tmpl-home-screen',
+  props: { projects: Array },
+  emits: ['create', 'open', 'download', 'delete', 'import'],
+  components: { 'project-card': ProjectCardDef }
+}
+
+const PalettePanelDef = {
+  template: '#tmpl-palette-panel',
+  emits: ['add-step']
+}
+
+const StepBlockDef = {
+  template: '#tmpl-step-block',
+  props: { step: Object, index: Number, total: Number, selected: Boolean },
+  emits: ['select', 'move', 'delete'],
+  computed: {
+    typeConfig() { return TYPE_CONFIG[this.step.type] || TYPE_CONFIG['message'] }
+  }
+}
+
+const ChainPanelDef = {
+  template: '#tmpl-chain-panel',
+  props: { steps: Array, selectedId: [String, null] },
+  emits: ['select', 'move', 'delete'],
+  components: { 'step-block': StepBlockDef }
+}
+
+const PropertyPanelDef = {
+  template: '#tmpl-property-panel',
+  props: { step: { type: Object, default: null } },
+  emits: ['update'],
+  computed: {
+    needsSelector() {
+      return this.step && TYPE_CONFIG[this.step.type] && TYPE_CONFIG[this.step.type].needsSel
+    }
+  }
+}
+
+const PreviewPaneDef = {
+  template: '#tmpl-preview-pane',
+  props: { loadedHtml: String, filename: String },
+  emits: ['file-selected', 'reset'],
+  setup(props, { emit }) {
+    const paneEl    = ref(null)
+    const iframeEl  = ref(null)
+    const handleEl  = ref(null)
+    const fileInputEl = ref(null)
+
+    // loadedHtml が変わったら iframe の srcdoc を更新
+    watch(() => props.loadedHtml, val => {
+      if (iframeEl.value) iframeEl.value.srcdoc = val || ''
+    })
+
+    function openFile() {
+      if (fileInputEl.value) fileInputEl.value.click()
+    }
+
+    onMounted(() => {
+      // コンポーネントマウント時点で loadedHtml が既にセットされている場合に対応
+      if (props.loadedHtml && iframeEl.value) {
+        iframeEl.value.srcdoc = props.loadedHtml
+      }
+
+      // リサイズハンドル
+      let dragging = false, startX = 0
+      handleEl.value.addEventListener('mousedown', e => {
+        dragging = true
+        startX = paneEl.value.getBoundingClientRect().left
+        handleEl.value.classList.add('dragging')
+        document.body.style.cursor = 'col-resize'
+        document.body.style.userSelect = 'none'
+        if (iframeEl.value) iframeEl.value.style.pointerEvents = 'none'
+        e.preventDefault()
+      })
+      document.addEventListener('mousemove', e => {
+        if (!dragging) return
+        const w = Math.max(200, Math.min(e.clientX - startX, window.innerWidth - 560))
+        paneEl.value.style.width = w + 'px'
+      })
+      document.addEventListener('mouseup', () => {
+        if (!dragging) return
+        dragging = false
+        handleEl.value.classList.remove('dragging')
+        document.body.style.cursor = ''
+        document.body.style.userSelect = ''
+        if (iframeEl.value) iframeEl.value.style.pointerEvents = ''
+      })
+    })
+
+    return { paneEl, iframeEl, handleEl, fileInputEl, openFile }
+  }
+}
+
+const EditorScreenDef = {
+  template: '#tmpl-editor-screen',
+  props: {
+    steps: Array,
+    selectedId: [String, null],
+    selectedStep: { type: Object, default: null },
+    loadedHtml: String,
+    previewFilename: String,
+    currentProjectName: String,
+    previewVisible: Boolean
+  },
+  emits: [
+    'go-home', 'save', 'import', 'open-export', 'open-analyzer',
+    'toggle-preview', 'name-change', 'add-step', 'select-step',
+    'move-step', 'delete-step', 'update-step', 'file-selected', 'reset-preview'
+  ],
+  components: {
+    'palette-panel': PalettePanelDef,
+    'chain-panel': ChainPanelDef,
+    'property-panel': PropertyPanelDef,
+    'preview-pane': PreviewPaneDef
+  }
+}
+
+// ── App ────────────────────────────────────────────────────
+const app = createApp({
+  template: '#tmpl-root',
+  setup() {
+    // Screen
+    const currentScreen = ref('home')
+
+    // Projects
+    const projects = ref([])
+    const currentProjectId = ref(null)
+
+    // Editor state
+    const steps = ref([])
+    const selectedId = ref(null)
+    const nextId = ref(1)
+
+    // Preview pane
+    const loadedHtml = ref('')
+    const previewFilename = ref('')
+    const previewPaneVisible = ref(false)
+
+    // Preview modal
+    const showPreviewModal = ref(false)
+    const previewIndex = ref(0)
+
+    // Export modal
+    const showExportModal = ref(false)
+    const exportTab = ref('embed')
+    const exportJson = ref('')
+    const exportEmbed = ref('')
+
+    // Analyzer modal
+    const showAnalyzerModal = ref(false)
+    const analyzerHtml = ref('')
+    const analyzerResults = ref([])
+    const analyzerStatus = ref('')
+
+    // Non-reactive
+    let debounceTimer = null
+    let cssObjectURLs = []
+
+    // ── computed ──────────────────────────────────────────
+    const selectedStep = computed(() =>
+      steps.value.find(s => s.id === selectedId.value) || null
+    )
+    const currentProjectName = computed(() => {
+      const p = projects.value.find(p => p.id === currentProjectId.value)
+      return p ? p.name : ''
+    })
+    const previewProgressPct = computed(() => {
+      if (!steps.value.length) return 0
+      return Math.round((previewIndex.value + 1) / steps.value.length * 100)
+    })
+
+    // ── localStorage helpers ──────────────────────────────
+    function loadProjectsFromStorage() {
+      try { return JSON.parse(localStorage.getItem('tm_projects') || '[]') } catch(e) { return [] }
+    }
+    function saveProjectsToStorage(list) {
+      localStorage.setItem('tm_projects', JSON.stringify(list))
+    }
+    function addOrUpdateProject(project) {
+      const list = loadProjectsFromStorage()
+      const idx = list.findIndex(p => p.id === project.id)
+      if (idx === -1) list.unshift(project)
+      else list[idx] = project
+      saveProjectsToStorage(list)
+      projects.value = loadProjectsFromStorage()
+    }
+    function autoSave() {
+      if (!currentProjectId.value) return
+      const list = loadProjectsFromStorage()
+      const idx = list.findIndex(p => p.id === currentProjectId.value)
+      if (idx === -1) return
+      list[idx].steps = steps.value
+      list[idx].nextId = nextId.value
+      list[idx].name = currentProjectName.value
+      list[idx].updatedAt = Date.now()
+      saveProjectsToStorage(list)
+      projects.value = list
+      localStorage.setItem('tm_last_project_id', currentProjectId.value)
+    }
+
+    // ── Project actions ───────────────────────────────────
+    function downloadProject(project) {
+      const json = JSON.stringify(project, null, 2)
+      const blob = new Blob([json], { type: 'application/json' })
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = (project.name || 'project') + '.json'
+      a.click()
+      URL.revokeObjectURL(a.href)
+    }
+    function saveCurrentProject() {
+      autoSave()
+      const list = loadProjectsFromStorage()
+      const project = list.find(p => p.id === currentProjectId.value)
+      if (project) downloadProject(project)
+    }
+    function importProjectFromFile(onLoaded) {
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = '.json'
+      input.onchange = e => {
+        const file = e.target.files[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = ev => {
+          try {
+            const data = JSON.parse(ev.target.result)
+            if (!data.id || !Array.isArray(data.steps)) { alert('不正なJSONファイルです'); return }
+            onLoaded(data)
+          } catch(err) { alert('JSONの読み込みに失敗しました') }
+        }
+        reader.readAsText(file)
+      }
+      input.click()
+    }
+
+    // ── Screen navigation ─────────────────────────────────
+    function loadProjectToEditor(project) {
+      currentProjectId.value = project.id
+      steps.value = project.steps ? project.steps.slice() : []
+      nextId.value = project.nextId || 1
+      selectedId.value = null
+      loadedHtml.value = ''
+      previewFilename.value = ''
+      previewPaneVisible.value = false
+      cssObjectURLs.forEach(u => URL.revokeObjectURL(u))
+      cssObjectURLs = []
+      localStorage.setItem('tm_last_project_id', project.id)
+    }
+    function showHome() {
+      autoSave()
+      projects.value = loadProjectsFromStorage()
+      currentScreen.value = 'home'
+    }
+    function showEditor(project) {
+      loadProjectToEditor(project)
+      currentScreen.value = 'editor'
+    }
+    function createNewProject() {
+      const name = prompt('プロジェクト名を入力してください', '新しいチュートリアル')
+      if (name === null) return
+      const project = {
+        id: 'proj_' + Date.now(),
+        name: name.trim() || '無題',
+        description: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        steps: [],
+        nextId: 1
+      }
+      addOrUpdateProject(project)
+      showEditor(project)
+    }
+    function openProject(id) {
+      const project = projects.value.find(p => p.id === id)
+      if (project) showEditor(project)
+    }
+    function downloadProjectById(id) {
+      const project = projects.value.find(p => p.id === id)
+      if (project) downloadProject(project)
+    }
+    function deleteProject(id) {
+      if (!confirm('このプロジェクトを削除しますか？')) return
+      const list = loadProjectsFromStorage().filter(p => p.id !== id)
+      saveProjectsToStorage(list)
+      projects.value = list
+    }
+    function importProjectToHome() {
+      importProjectFromFile(p => {
+        addOrUpdateProject(p)
+        showEditor(p)
+      })
+    }
+    function handleEditorImport() {
+      importProjectFromFile(p => {
+        if (confirm('現在のプロジェクトを上書きしますか？')) {
+          loadProjectToEditor(p)
+        }
+      })
+    }
+    function handleNameChange(val) {
+      const list = loadProjectsFromStorage()
+      const idx = list.findIndex(p => p.id === currentProjectId.value)
+      if (idx !== -1) {
+        list[idx].name = val
+        list[idx].updatedAt = Date.now()
+        saveProjectsToStorage(list)
+        projects.value = list
+      }
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => { updatePreview(); }, 300)
+    }
+
+    // ── Step CRUD ─────────────────────────────────────────
+    function addStep(type) {
+      const step = { id: String(nextId.value++), type, label: '', message: '', selector: '' }
+      steps.value.push(step)
+      selectedId.value = step.id
+      updatePreview()
+      autoSave()
+    }
+    function deleteStep(id) {
+      steps.value = steps.value.filter(s => s.id !== id)
+      if (selectedId.value === id) selectedId.value = null
+      updatePreview()
+      autoSave()
+    }
+    function handleMoveStep({ id, dir }) {
+      const i = steps.value.findIndex(s => s.id === id)
+      const j = i + dir
+      if (j < 0 || j >= steps.value.length) return
+      const arr = steps.value.slice()
+      const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp
+      steps.value = arr
+      updatePreview()
+      autoSave()
+    }
+    function selectStep(id) {
+      selectedId.value = id
+    }
+    function handleUpdateStep({ field, val }) {
+      const s = steps.value.find(s => s.id === selectedId.value)
+      if (s) s[field] = val
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => { updatePreview(); autoSave(); }, 300)
+    }
+
+    // ── Preview pane ──────────────────────────────────────
+    function togglePreviewPane() {
+      previewPaneVisible.value = !previewPaneVisible.value
+    }
+    // iframe が load 完了したら postMessage を送る
+    function sendUpdateAfterLoad(iframe) {
+      iframe.addEventListener('load', function handler() {
+        iframe.removeEventListener('load', handler)
+        // スクリプト実行を待つため少し遅延
+        setTimeout(updatePreview, 200)
+      }, { once: true })
+    }
+
+    function updatePreview() {
+      if (!loadedHtml.value) return
+      const iframe = document.querySelector('.preview-frame')
+      if (!iframe || !iframe.contentWindow) return
+      // Vue の reactive Proxy をそのまま渡すと structured clone で問題が出るため
+      // JSON経由でプレーンなオブジェクトに変換してから送信
+      const plainSteps = JSON.parse(JSON.stringify(steps.value))
+      iframe.contentWindow.postMessage({
+        type: 'tp-update',
+        config: { id: 'tutorial-1', name: String(currentProjectName.value || ''), description: '', steps: plainSteps }
+      }, '*')
+    }
+    function onPreviewFileSelected(event) {
+      const files = Array.from(event.target.files)
+      if (!files.length) return
+      const htmlFile = files.find(f => /\.html?$/i.test(f.name))
+      const cssFiles = files.filter(f => /\.css$/i.test(f.name))
+      if (!htmlFile) return
+
+      cssObjectURLs.forEach(u => URL.revokeObjectURL(u))
+      cssObjectURLs = []
+      const cssMap = {}
+      cssFiles.forEach(cssFile => {
+        const url = URL.createObjectURL(cssFile)
+        cssObjectURLs.push(url)
+        cssMap[cssFile.name] = url
+      })
+
+      const reader = new FileReader()
+      reader.onload = e => {
+        let html = e.target.result
+        if (cssFiles.length > 0) {
+          html = html.replace(/<link([^>]*?)href=(["'])([^"']*?)\2([^>]*?)>/gi, (match, before, quote, href, after) => {
+            const filename = href.split('/').pop().split('?')[0]
+            if (cssMap[filename]) return '<link' + before + 'href=' + quote + cssMap[filename] + quote + after + '>'
+            return match
+          })
+        }
+        const playerCode = document.getElementById('tp-player-source').textContent.trim()
+        const injection = '<script>\n' + playerCode + '\n\nwindow.addEventListener(\'message\', function(e) {\n  if (!e.data || e.data.type !== \'tp-update\') return;\n  if (window.TutorialPlayer) {\n    window.TutorialPlayer.init(e.data.config);\n  }\n});\n<\/script>'
+        let modified = html.replace(/<\/body>/i, injection + '\n</body>')
+        if (modified === html) modified = html + injection
+        loadedHtml.value = modified
+        // Vue の watch (preview-pane 内) が srcdoc をセットした後、
+        // iframe の load イベントで updatePreview を実行
+        nextTick(() => {
+          const iframe = document.querySelector('.preview-frame')
+          if (iframe) sendUpdateAfterLoad(iframe)
+        })
+        previewFilename.value = htmlFile.name + (cssFiles.length ? ' +' + cssFiles.length + 'CSS' : '')
+        event.target.value = ''
+      }
+      reader.readAsText(htmlFile)
+    }
+    function resetPreviewFrame() {
+      if (!loadedHtml.value) return
+      const iframe = document.querySelector('.preview-frame')
+      if (!iframe) return
+      iframe.srcdoc = ''
+      setTimeout(() => {
+        iframe.srcdoc = loadedHtml.value
+        sendUpdateAfterLoad(iframe)
+      }, 50)
+    }
+
+    // ── Preview modal ─────────────────────────────────────
+    function previewNext() {
+      if (previewIndex.value < steps.value.length - 1) previewIndex.value++
+      else showPreviewModal.value = false
+    }
+
+    // ── Export ────────────────────────────────────────────
+    function openExport() {
+      const tutorial = { id: 'tutorial-1', name: String(currentProjectName.value || ''), description: '', steps: JSON.parse(JSON.stringify(steps.value)) }
+      const json = JSON.stringify(tutorial, null, 2)
+      const playerCode = document.getElementById('tp-player-source').textContent.trim()
+      exportJson.value = json
+      exportEmbed.value = '<!-- チュートリアルPlayer（インライン） -->\n<script>\n' + playerCode + '\n<\/script>\n\n<!-- チュートリアル定義 -->\n<script>\nTutorialPlayer.init(' + json + ');\n<\/script>'
+      exportTab.value = 'embed'
+      showExportModal.value = true
+    }
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => alert('コピーしました！'))
+    }
+
+    // ── File System Access API: HTMLファイルへ直接書き込み ────
+    async function injectToFile() {
+      if (!('showOpenFilePicker' in window)) {
+        alert('このブラウザは File System Access API に対応していません。\nChrome または Edge をご利用ください。')
+        return
+      }
+      if (!steps.value.length) {
+        alert('ステップが1件もありません。先にブロックを追加してください。')
+        return
+      }
+
+      let fileHandle
+      try {
+        ;[fileHandle] = await window.showOpenFilePicker({
+          types: [{ description: 'HTMLファイル', accept: { 'text/html': ['.html', '.htm'] } }],
+          multiple: false
+        })
+      } catch (e) {
+        if (e.name !== 'AbortError') console.error(e)
+        return
+      }
+
+      const file = await fileHandle.getFile()
+      let content = await file.text()
+
+      const tutorial = { id: 'tutorial-1', name: String(currentProjectName.value || ''), description: '', steps: JSON.parse(JSON.stringify(steps.value)) }
+      const json = JSON.stringify(tutorial, null, 2)
+      const playerCode = document.getElementById('tp-player-source').textContent.trim()
+      const embedBlock =
+        '<!-- TUTORIAL-MAKER-START -->\n' +
+        '<!-- チュートリアルPlayer（インライン） -->\n' +
+        '<script>\n' + playerCode + '\n<\/script>\n\n' +
+        '<!-- チュートリアル定義 -->\n' +
+        '<script>\nTutorialPlayer.init(' + json + ');\n<\/script>\n' +
+        '<!-- TUTORIAL-MAKER-END -->'
+
+      let newContent
+      const existingBlockRe = /<!--\s*TUTORIAL-MAKER-START\s*-->[\s\S]*?<!--\s*TUTORIAL-MAKER-END\s*-->/
+
+      if (existingBlockRe.test(content)) {
+        // 既存ブロックを置き換え
+        newContent = content.replace(existingBlockRe, embedBlock)
+      } else if (/<\/body>/i.test(content)) {
+        newContent = content.replace(/<\/body>/i, '\n' + embedBlock + '\n</body>')
+      } else {
+        newContent = content + '\n' + embedBlock
+      }
+
+      try {
+        const writable = await fileHandle.createWritable()
+        await writable.write(newContent)
+        await writable.close()
+        alert('✓ ' + file.name + ' に埋め込みコードを書き込みました！')
+      } catch (e) {
+        alert('書き込みに失敗しました: ' + e.message)
+      }
+    }
+
+    // ── Analyzer ──────────────────────────────────────────
+    function openAnalyzer() {
+      if (loadedHtml.value) analyzerHtml.value = loadedHtml.value
+      showAnalyzerModal.value = true
+    }
+    function openAnalyzerFile() {
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = '.html'
+      input.onchange = e => {
+        const file = e.target.files[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = ev => { analyzerHtml.value = ev.target.result }
+        reader.readAsText(file)
+      }
+      input.click()
+    }
+    function runAnalyzer() {
+      if (!analyzerHtml.value.trim()) return
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(analyzerHtml.value, 'text/html')
+      const targets = doc.querySelectorAll("button, input, select, textarea, a[href], [role='button']")
+      const results = []
+      targets.forEach(el => {
+        const sel = buildSelectorFromEl(el)
+        const tag = el.tagName.toLowerCase()
+        const inputType = el.getAttribute('type') || ''
+        const text = (el.textContent || '').trim().slice(0, 40)
+          || el.getAttribute('placeholder')
+          || el.getAttribute('aria-label')
+          || el.getAttribute('name')
+          || el.getAttribute('value')
+          || '(テキストなし)'
+        const tagLabel = inputType ? tag + '[type=' + inputType + ']' : tag
+        results.push({ tag: tagLabel, text, selector: sel })
+      })
+      if (results.length === 0) {
+        analyzerStatus.value = 'インタラクティブな要素が見つかりませんでした'
+        analyzerResults.value = []
+      } else {
+        analyzerStatus.value = results.length + ' 件の要素が見つかりました — クリックでセレクタを現在のステップに挿入'
+        analyzerResults.value = results
+      }
+    }
+    function buildSelectorFromEl(el) {
+      if (el.id) return '#' + el.id
+      const name = el.getAttribute('name')
+      if (name) return '[name="' + name + '"]'
+      const parts = []
+      let cur = el
+      while (cur && cur.tagName && cur.tagName.toLowerCase() !== 'body') {
+        const tag = cur.tagName.toLowerCase()
+        if (cur.id) { parts.unshift('#' + cur.id); break }
+        const siblings = Array.from(cur.parentElement ? cur.parentElement.children : []).filter(c => c.tagName === cur.tagName)
+        if (siblings.length > 1) {
+          const idx = siblings.indexOf(cur) + 1
+          parts.unshift(tag + ':nth-of-type(' + idx + ')')
+        } else {
+          parts.unshift(tag)
+        }
+        cur = cur.parentElement
+      }
+      return parts.join(' > ')
+    }
+    function useSelector(selector) {
+      const s = steps.value.find(s => s.id === selectedId.value)
+      if (!s) { alert('先にステップを選択してください'); return }
+      s.selector = selector
+      showAnalyzerModal.value = false
+    }
+
+    // ── Init ──────────────────────────────────────────────
+    projects.value = loadProjectsFromStorage()
+    const lastId = localStorage.getItem('tm_last_project_id')
+    const lastProject = lastId ? projects.value.find(p => p.id === lastId) : null
+    if (lastProject) {
+      loadProjectToEditor(lastProject)
+      currentScreen.value = 'editor'
+    }
+
+    return {
+      currentScreen, projects, currentProjectId, steps, selectedId,
+      loadedHtml, previewFilename, previewPaneVisible,
+      showPreviewModal, previewIndex, previewProgressPct,
+      showExportModal, exportTab, exportJson, exportEmbed,
+      showAnalyzerModal, analyzerHtml, analyzerResults, analyzerStatus,
+      selectedStep, currentProjectName,
+      // actions
+      createNewProject, openProject, downloadProjectById, deleteProject,
+      importProjectToHome, showHome, saveCurrentProject, handleEditorImport,
+      handleNameChange, togglePreviewPane, addStep, deleteStep,
+      handleMoveStep, selectStep, handleUpdateStep,
+      onPreviewFileSelected, resetPreviewFrame,
+      previewNext,
+      openExport, copyText, injectToFile,
+      openAnalyzer, openAnalyzerFile, runAnalyzer, useSelector
+    }
+  }
+})
+
+// Vue 3: register components on app instance (not Vue.component)
+app.component('home-screen', HomeScreenDef)
+app.component('editor-screen', EditorScreenDef)
+app.component('project-card', ProjectCardDef)
+app.component('palette-panel', PalettePanelDef)
+app.component('chain-panel', ChainPanelDef)
+app.component('step-block', StepBlockDef)
+app.component('property-panel', PropertyPanelDef)
+app.component('preview-pane', PreviewPaneDef)
+
+app.mount('#app')
 </script>
 </body>
 </html>
