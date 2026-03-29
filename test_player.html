@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タスク管理アプリ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; display: flex; flex-direction: column; height: 100vh; }
+
+    /* ── Header ── */
+    #header { background: #1e40af; color: #fff; display: flex; align-items: center; gap: 16px; padding: 0 24px; height: 56px; flex-shrink: 0; }
+    #header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
+    #header .spacer { flex: 1; }
+    #header-search { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; padding: 6px 12px; font-size: 13px; width: 220px; outline: none; }
+    #header-search::placeholder { color: rgba(255,255,255,0.6); }
+    #header-search:focus { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); }
+    #notif-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; position: relative; }
+    #notif-badge { position: absolute; top: -2px; right: -4px; background: #ef4444; border-radius: 999px; font-size: 9px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; }
+    #user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #60a5fa; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+    /* ── Layout ── */
+    #body { display: flex; flex: 1; min-height: 0; }
+
+    /* ── Sidebar ── */
+    #sidebar { width: 220px; background: #fff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 16px 0; flex-shrink: 0; }
+    .nav-section { padding: 0 12px; margin-bottom: 8px; }
+    .nav-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 8px; margin-bottom: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; font-size: 13px; color: #475569; cursor: pointer; text-decoration: none; }
+    .nav-item:hover { background: #f1f5f9; }
+    .nav-item.active { background: #eff6ff; color: #1d4ed8; font-weight: 600; }
+    .nav-item .icon { font-size: 15px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: #e2e8f0; border-radius: 999px; font-size: 11px; padding: 1px 6px; color: #64748b; }
+    .nav-badge.red { background: #fee2e2; color: #ef4444; }
+    #new-project-btn { margin: 8px 12px 0; background: #1d4ed8; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    #new-project-btn:hover { background: #1e40af; }
+
+    /* ── Main ── */
+    #main { flex: 1; overflow-y: auto; padding: 24px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .page-title span { font-size: 13px; font-weight: 400; color: #94a3b8; }
+
+    /* ── Stats ── */
+    #stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: 10px; padding: 16px 20px; border: 1px solid #e2e8f0; }
+    .stat-label { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+    .stat-value { font-size: 26px; font-weight: 700; color: #0f172a; }
+    .stat-change { font-size: 11px; color: #22c55e; margin-top: 2px; }
+
+    /* ── Filter bar ── */
+    #filter-bar { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    #task-search { border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 12px; font-size: 13px; color: #1e293b; outline: none; width: 240px; }
+    #task-search:focus { border-color: #93c5fd; }
+    #status-filter { border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; font-size: 13px; color: #1e293b; background: #fff; outline: none; cursor: pointer; }
+    #priority-filter { border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; font-size: 13px; color: #1e293b; background: #fff; outline: none; cursor: pointer; }
+    #filter-bar .spacer { flex: 1; }
+    #add-task-btn { background: #1d4ed8; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    #add-task-btn:hover { background: #1e40af; }
+    #export-btn { background: #fff; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer; }
+    #export-btn:hover { border-color: #94a3b8; }
+
+    /* ── Task Table ── */
+    #task-table-wrap { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 24px; }
+    #task-table { width: 100%; border-collapse: collapse; }
+    #task-table th { background: #f8fafc; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    #task-table td { padding: 12px 16px; font-size: 13px; color: #334155; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    #task-table tr:last-child td { border-bottom: none; }
+    #task-table tr:hover td { background: #f8fafc; }
+    .task-name { font-weight: 500; color: #0f172a; }
+    .task-check { width: 15px; height: 15px; cursor: pointer; accent-color: #1d4ed8; }
+    .badge { display: inline-flex; align-items: center; border-radius: 999px; font-size: 11px; font-weight: 600; padding: 2px 8px; }
+    .badge-red { background: #fee2e2; color: #dc2626; }
+    .badge-yellow { background: #fef9c3; color: #ca8a04; }
+    .badge-blue { background: #dbeafe; color: #2563eb; }
+    .badge-green { background: #dcfce7; color: #16a34a; }
+    .badge-gray { background: #f1f5f9; color: #64748b; }
+    .task-action-btn { background: none; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; font-size: 11px; color: #64748b; cursor: pointer; margin-right: 4px; }
+    .task-action-btn:hover { border-color: #94a3b8; color: #334155; }
+
+    /* ── Add Task Form ── */
+    #add-form-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 24px; }
+    #add-form-section h2 { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: #64748b; }
+    .form-group input, .form-group select, .form-group textarea { border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1e293b; outline: none; font-family: inherit; background: #fff; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #93c5fd; box-shadow: 0 0 0 3px #dbeafe; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 4px; }
+    #submit-task-btn { background: #1d4ed8; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    #submit-task-btn:hover { background: #1e40af; }
+    #reset-form-btn { background: #fff; color: #64748b; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
+    #reset-form-btn:hover { border-color: #94a3b8; }
+    .form-check-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13px; color: #475569; }
+    .form-check-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: #1d4ed8; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────── -->
+<header id="header">
+  <h1>📋 TaskFlow</h1>
+  <div class="spacer"></div>
+  <input id="header-search" type="text" placeholder="🔍 検索...">
+  <button id="notif-btn">🔔<span id="notif-badge">3</span></button>
+  <div id="user-avatar">田</div>
+</header>
+
+<!-- ── Body ───────────────────────────────── -->
+<div id="body">
+
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">メニュー</div>
+      <a class="nav-item active" href="#"><span class="icon">📋</span>タスク一覧<span class="nav-badge red">5</span></a>
+      <a class="nav-item" href="#"><span class="icon">📅</span>カレンダー</a>
+      <a class="nav-item" href="#"><span class="icon">📊</span>レポート</a>
+      <a class="nav-item" href="#"><span class="icon">👥</span>チーム</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">プロジェクト</div>
+      <a class="nav-item" href="#"><span class="icon">🟦</span>Webリニューアル<span class="nav-badge">8</span></a>
+      <a class="nav-item" href="#"><span class="icon">🟨</span>アプリ開発<span class="nav-badge">3</span></a>
+      <a class="nav-item" href="#"><span class="icon">🟩</span>マーケティング</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">設定</div>
+      <a class="nav-item" href="#"><span class="icon">⚙️</span>設定</a>
+    </div>
+    <button id="new-project-btn">＋ 新しいプロジェクト</button>
+  </nav>
+
+  <!-- Main -->
+  <main id="main">
+    <div class="page-title">タスク一覧 <span>全 8 件</span></div>
+
+    <!-- Stats -->
+    <div id="stats">
+      <div class="stat-card"><div class="stat-label">未着手</div><div class="stat-value">3</div><div class="stat-change">▲ 1 今週</div></div>
+      <div class="stat-card"><div class="stat-label">進行中</div><div class="stat-value">4</div><div class="stat-change">▲ 2 今週</div></div>
+      <div class="stat-card"><div class="stat-label">完了</div><div class="stat-value">12</div><div class="stat-change">▲ 5 今週</div></div>
+      <div class="stat-card"><div class="stat-label">遅延</div><div class="stat-value" style="color:#ef4444">1</div><div class="stat-change" style="color:#ef4444">▼ 要対応</div></div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div id="filter-bar">
+      <input id="task-search" type="text" placeholder="タスクを検索...">
+      <select id="status-filter">
+        <option value="">すべてのステータス</option>
+        <option>未着手</option>
+        <option>進行中</option>
+        <option>完了</option>
+        <option>遅延</option>
+      </select>
+      <select id="priority-filter">
+        <option value="">すべての優先度</option>
+        <option>高</option>
+        <option>中</option>
+        <option>低</option>
+      </select>
+      <div class="spacer"></div>
+      <button id="export-btn">⬇ エクスポート</button>
+      <button id="add-task-btn">＋ タスクを追加</button>
+    </div>
+
+    <!-- Task Table -->
+    <div id="task-table-wrap">
+      <table id="task-table">
+        <thead>
+          <tr>
+            <th style="width:36px"></th>
+            <th>タスク名</th>
+            <th>担当者</th>
+            <th>優先度</th>
+            <th>ステータス</th>
+            <th>期限</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input class="task-check" type="checkbox"></td>
+            <td class="task-name">トップページのデザイン修正</td>
+            <td>田中 太郎</td>
+            <td><span class="badge badge-red">高</span></td>
+            <td><span class="badge badge-yellow">進行中</span></td>
+            <td>2026-04-02</td>
+            <td><button class="task-action-btn">編集</button><button class="task-action-btn">削除</button></td>
+          </tr>
+          <tr>
+            <td><input class="task-check" type="checkbox"></td>
+            <td class="task-name">APIドキュメント作成</td>
+            <td>鈴木 花子</td>
+            <td><span class="badge badge-yellow">中</span></td>
+            <td><span class="badge badge-gray">未着手</span></td>
+            <td>2026-04-10</td>
+            <td><button class="task-action-btn">編集</button><button class="task-action-btn">削除</button></td>
+          </tr>
+          <tr>
+            <td><input class="task-check" type="checkbox" checked></td>
+            <td class="task-name" style="text-decoration:line-through;color:#94a3b8">ミーティング議事録の共有</td>
+            <td>佐藤 次郎</td>
+            <td><span class="badge badge-blue">低</span></td>
+            <td><span class="badge badge-green">完了</span></td>
+            <td>2026-03-28</td>
+            <td><button class="task-action-btn">編集</button><button class="task-action-btn">削除</button></td>
+          </tr>
+          <tr>
+            <td><input class="task-check" type="checkbox"></td>
+            <td class="task-name">ログイン画面のバグ修正</td>
+            <td>田中 太郎</td>
+            <td><span class="badge badge-red">高</span></td>
+            <td><span class="badge badge-red">遅延</span></td>
+            <td>2026-03-27</td>
+            <td><button class="task-action-btn">編集</button><button class="task-action-btn">削除</button></td>
+          </tr>
+          <tr>
+            <td><input class="task-check" type="checkbox"></td>
+            <td class="task-name">新機能の要件定義</td>
+            <td>山田 三郎</td>
+            <td><span class="badge badge-yellow">中</span></td>
+            <td><span class="badge badge-yellow">進行中</span></td>
+            <td>2026-04-15</td>
+            <td><button class="task-action-btn">編集</button><button class="task-action-btn">削除</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add Task Form -->
+    <div id="add-form-section">
+      <h2>＋ 新しいタスクを追加</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="task-title">タスク名 <span style="color:#ef4444">*</span></label>
+          <input id="task-title" type="text" placeholder="例：ランディングページの作成">
+        </div>
+        <div class="form-group">
+          <label for="task-assignee">担当者</label>
+          <select id="task-assignee">
+            <option value="">担当者を選択</option>
+            <option>田中 太郎</option>
+            <option>鈴木 花子</option>
+            <option>佐藤 次郎</option>
+            <option>山田 三郎</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="task-priority">優先度</label>
+          <select id="task-priority">
+            <option value="">優先度を選択</option>
+            <option>高</option>
+            <option>中</option>
+            <option>低</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-deadline">期限</label>
+          <input id="task-deadline" type="date">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label for="task-desc">説明</label>
+        <textarea id="task-desc" placeholder="タスクの詳細を入力してください..."></textarea>
+      </div>
+      <div class="form-check-row">
+        <input id="task-notify" type="checkbox">
+        <label for="task-notify">期限の1日前に通知を送る</label>
+      </div>
+      <div class="form-actions">
+        <button id="submit-task-btn">タスクを登録</button>
+        <button id="reset-form-btn" type="button">リセット</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

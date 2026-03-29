@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>チュートリアルメーカー</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; background: #f8fafc; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Toolbar ── */
+#toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
+#toolbar h1 { font-size: 15px; font-weight: 700; color: #1d6fd8; white-space: nowrap; }
+#tutorial-name { flex: 1; max-width: 260px; height: 32px; padding: 0 10px; border: 1px solid #e2e8f0; border-radius: 7px; font-size: 13px; outline: none; }
+#tutorial-name:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
+.spacer { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, box-shadow 0.15s; white-space: nowrap; }
+.btn-outline { background: #fff; border: 1px solid #e2e8f0; color: #334155; }
+.btn-outline:hover { background: #f1f5f9; }
+.btn-primary { background: #1d6fd8; color: #fff; }
+.btn-primary:hover { background: #1558b0; }
+.btn-danger-ghost { background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px; border-radius: 5px; line-height: 1; font-size: 14px; }
+.btn-danger-ghost:hover { background: #fee2e2; }
+.btn-ghost-sm { background: none; border: none; cursor: pointer; padding: 3px 4px; border-radius: 4px; color: #94a3b8; font-size: 12px; line-height: 1; }
+.btn-ghost-sm:hover { background: #f1f5f9; color: #475569; }
+.btn-ghost-sm:disabled { opacity: 0.3; cursor: default; }
+
+/* ── Screen layout ── */
+#home-screen   { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #f8fafc; }
+#editor-screen { flex: 1; display: none; flex-direction: column; min-height: 0; }
+
+/* ── Home Screen ── */
+#home-header { padding: 14px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; }
+#home-header h1 { font-size: 16px; font-weight: 700; color: #1d6fd8; }
+#home-body { flex: 1; padding: 32px; max-width: 680px; margin: 0 auto; width: 100%; }
+#home-body h2 { font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+#project-list { display: flex; flex-direction: column; gap: 8px; }
+#home-new-btn { display: flex; align-items: center; gap: 8px; padding: 14px 16px; background: #eff6ff; border: 2px dashed #93c5fd; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: #1d4ed8; width: 100%; }
+#home-new-btn:hover { background: #dbeafe; }
+.proj-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.proj-card:hover { border-color: #93c5fd; }
+.proj-card-icon { font-size: 22px; flex-shrink: 0; }
+.proj-card-body { flex: 1; min-width: 0; }
+.proj-card-name { font-size: 14px; font-weight: 600; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.proj-card-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.proj-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+#home-footer { padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 8px; }
+
+/* ── Main 4-col ── */
+#main { display: flex; flex: 1; min-height: 0; }
+
+/* ── Preview Pane ── */
+#preview-pane { min-width: 200px; max-width: calc(100vw - 600px); border-right: none; background: #fff; display: none; flex-direction: column; width: 420px; flex-shrink: 0; }
+#preview-resize-handle { width: 5px; flex-shrink: 0; cursor: col-resize; background: #e2e8f0; transition: background 0.15s; }
+#preview-resize-handle:hover, #preview-resize-handle.dragging { background: #93c5fd; }
+.btn-active { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+#preview-pane-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+#preview-pane-title { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; flex: 1; }
+#preview-filename { font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+#preview-frame-wrap { flex: 1; min-height: 0; position: relative; }
+#preview-frame { width: 100%; height: 100%; border: none; display: block; }
+#preview-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #cbd5e1; font-size: 13px; text-align: center; padding: 20px; pointer-events: none; }
+
+/* ── Palette ── */
+#palette { width: 210px; border-right: 1px solid #e2e8f0; background: #f8fafc; display: flex; flex-direction: column; flex-shrink: 0; }
+#palette-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+#palette-items { padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+.palette-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 9px; border: 1px solid; cursor: pointer; transition: filter 0.1s; }
+.palette-item:hover { filter: brightness(0.95); }
+.palette-item span.icon { font-size: 16px; flex-shrink: 0; }
+.palette-item .pi-label { font-size: 13px; font-weight: 600; }
+.palette-item .pi-desc { font-size: 11px; opacity: 0.7; }
+.pi-message { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.pi-highlight { background: #fefce8; border-color: #fde68a; color: #92400e; }
+.pi-wait-click { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.pi-wait-input { background: #faf5ff; border-color: #e9d5ff; color: #7e22ce; }
+#palette-hint { padding: 10px 12px; margin-top: auto; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+
+/* ── Chain ── */
+#chain { flex: 1; overflow-y: auto; padding: 16px; }
+#chain-inner { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; align-items: stretch; }
+#empty-hint { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #cbd5e1; text-align: center; padding: 40px; }
+#empty-hint .arrow { font-size: 36px; margin-bottom: 8px; }
+.connector { display: flex; flex-direction: column; align-items: center; padding: 2px 0; color: #cbd5e1; font-size: 11px; line-height: 1; }
+.connector .line { width: 1px; height: 8px; background: currentColor; }
+
+/* ── StepBlock ── */
+.step-block { border-radius: 10px; border: 2px solid; padding: 10px 12px; cursor: pointer; transition: box-shadow 0.15s, outline 0.1s; }
+.step-block:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.step-block.selected { outline: 2.5px solid #1d6fd8; outline-offset: 2px; }
+.sb-message { background: #eff6ff; border-color: #bfdbfe; }
+.sb-highlight { background: #fefce8; border-color: #fde68a; }
+.sb-wait-click { background: #f0fdf4; border-color: #bbf7d0; }
+.sb-wait-input { background: #faf5ff; border-color: #e9d5ff; }
+.step-block-inner { display: flex; align-items: center; gap: 8px; }
+.sb-icon { font-size: 15px; flex-shrink: 0; }
+.sb-content { flex: 1; min-width: 0; }
+.sb-meta { display: flex; align-items: center; gap: 6px; }
+.sb-idx { font-size: 11px; font-weight: 700; color: #94a3b8; }
+.sb-type { font-size: 11px; font-weight: 600; color: #64748b; }
+.sb-lbl { font-size: 12px; font-weight: 700; color: #1e293b; }
+.sb-msg { font-size: 13px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.sb-sel { font-size: 11px; font-family: monospace; color: #94a3b8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-actions { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
+
+/* ── Editor ── */
+#editor { width: 280px; border-left: 1px solid #e2e8f0; background: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+#editor-header { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+#editor-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex: 1; }
+#editor-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: #cbd5e1; text-align: center; padding: 20px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; font-weight: 600; color: #64748b; }
+.field input, .field textarea { border: 1px solid #e2e8f0; border-radius: 7px; padding: 7px 10px; font-size: 13px; outline: none; font-family: inherit; resize: none; }
+.field input:focus, .field textarea:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
+.field textarea { min-height: 90px; }
+.field .mono { font-family: monospace; }
+.field .hint { font-size: 11px; color: #94a3b8; line-height: 1.5; }
+
+/* ── Modal overlay ── */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal { background: #fff; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); width: 100%; max-width: 640px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; }
+.modal-title { font-size: 15px; font-weight: 700; }
+.modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: #94a3b8; line-height: 1; padding: 2px 6px; border-radius: 6px; }
+.modal-close:hover { background: #f1f5f9; color: #334155; }
+.modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+
+/* ── Preview modal ── */
+#preview-progress-wrap { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+#preview-progress-bar { height: 100%; background: #1d6fd8; border-radius: 2px; transition: width 0.3s; }
+#preview-counter { font-size: 12px; color: #94a3b8; text-align: right; }
+#preview-chat { background: #f8fafc; border-radius: 10px; padding: 16px; min-height: 100px; }
+.chat-row { display: flex; align-items: flex-start; gap: 10px; }
+.chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1d6fd8; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.chat-bubble { background: #fff; border-radius: 14px; border-top-left-radius: 3px; padding: 10px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); max-width: 360px; }
+.chat-msg { font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+.chat-sel { font-size: 11px; color: #94a3b8; margin-top: 6px; font-family: monospace; }
+.chat-wait { font-size: 12px; color: #64748b; font-style: italic; margin-top: 8px; margin-left: 42px; }
+#preview-nav { display: flex; justify-content: space-between; align-items: center; }
+
+/* ── Export modal ── */
+.tab-bar { display: flex; gap: 4px; border-bottom: 1px solid #e2e8f0; padding: 0 0 1px; margin-bottom: 2px; }
+.tab { padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; color: #64748b; background: none; border-top: none; border-left: none; border-right: none; margin-bottom: -1px; }
+.tab.active { color: #1d6fd8; border-bottom-color: #1d6fd8; }
+.tab-pane { display: none; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.tab-pane.active { display: flex; }
+.code-wrap { position: relative; flex: 1; min-height: 180px; }
+.code-wrap pre { background: #f1f5f9; border-radius: 8px; padding: 14px; font-size: 12px; font-family: monospace; overflow: auto; height: 100%; white-space: pre-wrap; word-break: break-all; max-height: 320px; }
+.copy-btn { position: absolute; top: 8px; right: 8px; }
+.desc { font-size: 12px; color: #64748b; line-height: 1.5; }
+
+/* ── HTML Analyzer modal ── */
+#analyzer-html { width: 100%; min-height: 110px; border: 1px solid #e2e8f0; border-radius: 7px; padding: 8px 10px; font-size: 12px; font-family: monospace; resize: vertical; outline: none; }
+#analyzer-html:focus { border-color: #1d6fd8; box-shadow: 0 0 0 2px #1d6fd820; }
+#analyzer-results { display: flex; flex-direction: column; gap: 5px; max-height: 260px; overflow-y: auto; }
+.el-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: background 0.1s; }
+.el-row:hover { background: #f1f5f9; }
+.el-tag { font-size: 11px; background: #e2e8f0; border-radius: 4px; padding: 2px 6px; font-family: monospace; color: #475569; flex-shrink: 0; }
+.el-text { flex: 1; min-width: 0; }
+.el-label { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.el-sel { font-size: 11px; font-family: monospace; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.el-use { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ── Home Screen ──────────────────────────────────────────── -->
+<div id="home-screen">
+  <div id="home-header">
+    <h1>🧩 チュートリアルメーカー</h1>
+  </div>
+  <div id="home-body">
+    <h2>プロジェクト</h2>
+    <div id="project-list"></div>
+    <div id="home-footer">
+      <button class="btn btn-outline" onclick="importProjectFromFile(function(p){ addOrUpdateProject(p); showEditor(p); })">📂 JSONから読み込む</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Editor Screen ─────────────────────────────────────────── -->
+<div id="editor-screen">
+
+<!-- ── Toolbar ────────────────────────────────────────────── -->
+<div id="toolbar">
+  <button class="btn btn-outline" onclick="showHome()">← ホームへ</button>
+  <input id="tutorial-name" type="text" placeholder="チュートリアル名を入力..." oninput="autoSave()">
+  <div class="spacer"></div>
+  <button class="btn btn-outline" onclick="saveCurrentProject()">💾 保存</button>
+  <button class="btn btn-outline" onclick="importProjectFromFile(function(p){ if(confirm('現在のプロジェクトを上書きしますか？')){ loadProjectToEditor(p); } })">📂 読み込み</button>
+  <button class="btn btn-outline" onclick="openAnalyzer()">🔍 HTML 解析</button>
+  <button id="preview-toggle-btn" class="btn btn-outline" onclick="togglePreviewPane()">👁 プレビュー</button>
+  <button class="btn btn-primary" onclick="openExport()">⬇ エクスポート</button>
+</div>
+
+<!-- ── Main ──────────────────────────────────────────────── -->
+<div id="main">
+  <!-- Preview Pane -->
+  <div id="preview-pane">
+    <div id="preview-pane-header">
+      <span id="preview-pane-title">🖥 プレビュー</span>
+      <span id="preview-filename" style="display:none"></span>
+      <button class="btn btn-outline" style="height:26px;padding:0 10px;font-size:12px" onclick="openPreviewFile()">📂 HTMLを開く</button>
+      <button class="btn btn-outline" id="preview-reset-btn" style="height:26px;padding:0 10px;font-size:12px;display:none" onclick="resetPreviewFrame()">↺ リセット</button>
+    </div>
+    <div id="preview-frame-wrap">
+      <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+      <div id="preview-empty">← HTMLファイルを開いてください</div>
+    </div>
+  </div>
+  <div id="preview-resize-handle"></div>
+  <input type="file" id="preview-file-input" accept=".html,.css" multiple style="display:none" onchange="onPreviewFileSelected(event)">
+  <!-- Palette -->
+  <div id="palette">
+    <div id="palette-header">ブロック追加</div>
+    <div id="palette-items">
+      <div class="palette-item pi-message" onclick="addStep('message')">
+        <span class="icon">💬</span>
+        <div><div class="pi-label">メッセージ</div><div class="pi-desc">テキストを表示</div></div>
+      </div>
+      <div class="palette-item pi-highlight" onclick="addStep('highlight')">
+        <span class="icon">🔦</span>
+        <div><div class="pi-label">ハイライト</div><div class="pi-desc">要素を強調表示</div></div>
+      </div>
+      <div class="palette-item pi-wait-click" onclick="addStep('wait-click')">
+        <span class="icon">👆</span>
+        <div><div class="pi-label">クリック待ち</div><div class="pi-desc">要素クリックで進む</div></div>
+      </div>
+      <div class="palette-item pi-wait-input" onclick="addStep('wait-input')">
+        <span class="icon">⌨️</span>
+        <div><div class="pi-label">入力待ち</div><div class="pi-desc">入力完了で進む</div></div>
+      </div>
+    </div>
+    <div id="palette-hint">クリックで末尾に追加。右パネルで内容を編集。</div>
+  </div>
+
+  <!-- Chain -->
+  <div id="chain">
+    <div id="chain-inner">
+      <div id="empty-hint"><div class="arrow">←</div><div>ブロックを追加してください</div></div>
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <div id="editor">
+    <div id="editor-header">プロパティ</div>
+    <div id="editor-empty">ステップを選択すると編集できます</div>
+    <div id="editor-body" style="display:none">
+      <div class="field">
+        <label>ラベル（任意）</label>
+        <input id="ed-label" type="text" placeholder="例: ログインボタン" oninput="updateSelected('label', this.value)">
+      </div>
+      <div class="field">
+        <label>メッセージ</label>
+        <textarea id="ed-message" placeholder="例: ここのIDを入力してね" oninput="updateSelected('message', this.value)"></textarea>
+      </div>
+      <div class="field" id="ed-selector-field">
+        <label>CSSセレクタ</label>
+        <input id="ed-selector" type="text" placeholder="例: #submit-button" class="mono" oninput="updateSelected('selector', this.value)">
+        <span class="hint">DevToolsで要素を右クリック →<br>「Copy &gt; Copy selector」で取得できます。</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /#editor-screen -->
+
+<!-- ── Preview Modal ────────────────────────────────────── -->
+<div id="preview-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)closePreview()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">プレビュー</span>
+      <button class="modal-close" onclick="closePreview()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="preview-progress-wrap"><div id="preview-progress-bar"></div></div>
+      <div id="preview-counter"></div>
+      <div id="preview-chat"></div>
+      <div id="preview-nav">
+        <button class="btn btn-outline" id="preview-prev" onclick="previewPrev()">← 前へ</button>
+        <button class="btn btn-primary" id="preview-next" onclick="previewNext()">次へ →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Export Modal ─────────────────────────────────────── -->
+<div id="export-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeExport()">
+  <div class="modal" style="max-height:80vh">
+    <div class="modal-header">
+      <span class="modal-title">エクスポート</span>
+      <button class="modal-close" onclick="closeExport()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-bar">
+        <button class="tab active" onclick="switchTab('embed')">埋め込みコード</button>
+        <button class="tab" onclick="switchTab('json')">JSON</button>
+      </div>
+      <div id="tab-embed" class="tab-pane active">
+        <p class="desc">対象サイトの <code>&lt;/body&gt;</code> 直前にこのコードを貼り付けてください。</p>
+        <div class="code-wrap">
+          <pre id="embed-code"></pre>
+          <button class="btn btn-outline copy-btn" onclick="copyCode('embed-code')">📋 コピー</button>
+        </div>
+      </div>
+      <div id="tab-json" class="tab-pane">
+        <p class="desc">チュートリアルの定義JSONです。</p>
+        <div class="code-wrap">
+          <pre id="json-code"></pre>
+          <button class="btn btn-outline copy-btn" onclick="copyCode('json-code')">📋 コピー</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HTML Analyzer Modal ──────────────────────────────── -->
+<div id="analyzer-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeAnalyzer()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🔍 HTML 解析 — 要素を自動検出</span>
+      <button class="modal-close" onclick="closeAnalyzer()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <label style="margin:0">対象サイトの HTML を貼り付けるか、ファイルを選択してください</label>
+          <button class="btn btn-outline" onclick="openAnalyzerFile()" style="height:28px; font-size:12px; padding:0 10px; flex-shrink:0; margin-left:8px;">📂 ファイルを開く</button>
+        </div>
+        <textarea id="analyzer-html" placeholder="<form id='login-form'>&#10;  <input type='text' name='username' placeholder='ユーザーID'>&#10;  <button type='submit'>ログイン</button>&#10;</form>"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="runAnalyzer()" style="align-self:flex-start">解析する</button>
+      <div id="analyzer-status" style="font-size:12px;color:#64748b"></div>
+      <div id="analyzer-results"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── State ────────────────────────────────────────────────
+var steps = []
+var selectedId = null
+var nextId = 1
+var previewIndex = 0
+var loadedHtml = ''
+var debounceTimer = null
+var cssObjectURLs = []
+var currentProjectId = null
+
+var TYPE_CONFIG = {
+  'message':    { label: 'メッセージ', icon: '💬', blockCls: 'sb-message',    needsSel: false },
+  'highlight':  { label: 'ハイライト', icon: '🔦', blockCls: 'sb-highlight',  needsSel: true  },
+  'wait-click': { label: 'クリック待ち', icon: '👆', blockCls: 'sb-wait-click', needsSel: true  },
+  'wait-input': { label: '入力待ち',   icon: '⌨️', blockCls: 'sb-wait-input', needsSel: true  },
+}
+
+// ─── Project Management ──────────────────────────────────
+function loadProjects() {
+  try { return JSON.parse(localStorage.getItem('tm_projects') || '[]') } catch(e) { return [] }
+}
+function saveProjects(projects) {
+  localStorage.setItem('tm_projects', JSON.stringify(projects))
+}
+function addOrUpdateProject(project) {
+  var projects = loadProjects()
+  var idx = projects.findIndex(function(p){ return p.id === project.id })
+  if (idx === -1) projects.unshift(project)
+  else projects[idx] = project
+  saveProjects(projects)
+}
+function autoSave() {
+  if (!currentProjectId) return
+  var projects = loadProjects()
+  var idx = projects.findIndex(function(p){ return p.id === currentProjectId })
+  if (idx === -1) return
+  projects[idx].steps = steps
+  projects[idx].nextId = nextId
+  projects[idx].name = document.getElementById('tutorial-name').value
+  projects[idx].updatedAt = Date.now()
+  saveProjects(projects)
+  localStorage.setItem('tm_last_project_id', currentProjectId)
+}
+function downloadProject(project) {
+  var json = JSON.stringify(project, null, 2)
+  var blob = new Blob([json], { type: 'application/json' })
+  var a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = (project.name || 'project') + '.json'
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+function saveCurrentProject() {
+  autoSave()
+  var projects = loadProjects()
+  var project = projects.find(function(p){ return p.id === currentProjectId })
+  if (project) downloadProject(project)
+}
+function importProjectFromFile(onLoaded) {
+  var input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.json'
+  input.onchange = function(e) {
+    var file = e.target.files[0]
+    if (!file) return
+    var reader = new FileReader()
+    reader.onload = function(ev) {
+      try {
+        var data = JSON.parse(ev.target.result)
+        if (!data.id || !Array.isArray(data.steps)) { alert('不正なJSONファイルです'); return }
+        onLoaded(data)
+      } catch(err) { alert('JSONの読み込みに失敗しました') }
+    }
+    reader.readAsText(file)
+  }
+  input.click()
+}
+function formatRelativeDate(ts) {
+  var diff = Math.floor((Date.now() - ts) / 1000)
+  if (diff < 60) return 'たった今'
+  if (diff < 3600) return Math.floor(diff/60) + '分前'
+  if (diff < 86400) return Math.floor(diff/3600) + '時間前'
+  return Math.floor(diff/86400) + '日前'
+}
+function renderProjectList() {
+  var list = document.getElementById('project-list')
+  var projects = loadProjects()
+  var html = '<button id="home-new-btn" onclick="createNewProject()">＋ 新規プロジェクト</button>'
+  projects.forEach(function(p) {
+    html += '<div class="proj-card">'
+    html += '<div class="proj-card-icon">📄</div>'
+    html += '<div class="proj-card-body">'
+    html += '<div class="proj-card-name">' + esc(p.name || '無題') + '</div>'
+    html += '<div class="proj-card-meta">ステップ数: ' + p.steps.length + '　更新: ' + formatRelativeDate(p.updatedAt) + '</div>'
+    html += '</div>'
+    html += '<div class="proj-card-actions">'
+    html += '<button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px" onclick="openProject(\'' + p.id + '\')">開く</button>'
+    html += '<button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px" onclick="downloadProjectById(\'' + p.id + '\')">📥</button>'
+    html += '<button class="btn btn-outline" style="height:28px;font-size:12px;padding:0 10px;color:#ef4444;border-color:#fca5a5" onclick="deleteProject(\'' + p.id + '\')">🗑</button>'
+    html += '</div></div>'
+  })
+  list.innerHTML = html
+}
+function showHome() {
+  autoSave()
+  renderProjectList()
+  document.getElementById('home-screen').style.display = 'flex'
+  document.getElementById('editor-screen').style.display = 'none'
+}
+function showEditor(project) {
+  loadProjectToEditor(project)
+  document.getElementById('home-screen').style.display = 'none'
+  document.getElementById('editor-screen').style.display = 'flex'
+}
+function loadProjectToEditor(project) {
+  currentProjectId = project.id
+  steps = project.steps ? project.steps.slice() : []
+  nextId = project.nextId || 1
+  selectedId = null
+  document.getElementById('tutorial-name').value = project.name || ''
+  renderChain()
+  renderEditor()
+  loadedHtml = ''
+  cssObjectURLs.forEach(function(u){ URL.revokeObjectURL(u) })
+  cssObjectURLs = []
+  var iframe = document.getElementById('preview-frame')
+  iframe.srcdoc = ''
+  document.getElementById('preview-empty').style.display = 'flex'
+  document.getElementById('preview-filename').style.display = 'none'
+  document.getElementById('preview-reset-btn').style.display = 'none'
+  document.getElementById('preview-pane').style.display = 'none'
+  document.getElementById('preview-toggle-btn').classList.remove('btn-active')
+  localStorage.setItem('tm_last_project_id', project.id)
+}
+function createNewProject() {
+  var name = prompt('プロジェクト名を入力してください', '新しいチュートリアル')
+  if (name === null) return
+  var project = {
+    id: 'proj_' + Date.now(),
+    name: name.trim() || '無題',
+    description: '',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    steps: [],
+    nextId: 1
+  }
+  addOrUpdateProject(project)
+  showEditor(project)
+}
+function openProject(id) {
+  var projects = loadProjects()
+  var project = projects.find(function(p){ return p.id === id })
+  if (project) showEditor(project)
+}
+function downloadProjectById(id) {
+  var projects = loadProjects()
+  var project = projects.find(function(p){ return p.id === id })
+  if (project) downloadProject(project)
+}
+function deleteProject(id) {
+  if (!confirm('このプロジェクトを削除しますか？')) return
+  var projects = loadProjects().filter(function(p){ return p.id !== id })
+  saveProjects(projects)
+  renderProjectList()
+}
+
+// ─── Step CRUD ────────────────────────────────────────────
+function addStep(type) {
+  var step = { id: String(nextId++), type: type, label: '', message: '', selector: '' }
+  steps.push(step)
+  selectedId = step.id
+  renderChain()
+  renderEditor()
+  updatePreview()
+  autoSave()
+}
+
+function deleteStep(id) {
+  steps = steps.filter(function(s){ return s.id !== id })
+  if (selectedId === id) { selectedId = null }
+  renderChain()
+  renderEditor()
+  updatePreview()
+  autoSave()
+}
+
+function moveStep(id, dir) {
+  var i = steps.findIndex(function(s){ return s.id === id })
+  var j = i + dir
+  if (j < 0 || j >= steps.length) return
+  var tmp = steps[i]; steps[i] = steps[j]; steps[j] = tmp
+  renderChain()
+  updatePreview()
+  autoSave()
+}
+
+function selectStep(id) {
+  selectedId = id
+  renderChain()
+  renderEditor()
+}
+
+function updateSelected(field, val) {
+  if (!selectedId) return
+  var s = steps.find(function(s){ return s.id === selectedId })
+  if (s) { s[field] = val }
+  debouncedUpdatePreview()
+}
+
+// ─── Render Chain ─────────────────────────────────────────
+function renderChain() {
+  var inner = document.getElementById('chain-inner')
+  inner.innerHTML = ''
+
+  if (steps.length === 0) {
+    inner.innerHTML = '<div id="empty-hint"><div class="arrow">←</div><div>ブロックを追加してください</div></div>'
+    return
+  }
+
+  steps.forEach(function(step, i) {
+    var cfg = TYPE_CONFIG[step.type]
+    var selected = step.id === selectedId
+
+    var block = document.createElement('div')
+    block.className = 'step-block ' + cfg.blockCls + (selected ? ' selected' : '')
+    block.onclick = function() { selectStep(step.id) }
+
+    block.innerHTML = [
+      '<div class="step-block-inner">',
+        '<span class="sb-icon">' + cfg.icon + '</span>',
+        '<div class="sb-content">',
+          '<div class="sb-meta">',
+            '<span class="sb-idx">' + (i+1) + '</span>',
+            '<span class="sb-type">' + cfg.label + '</span>',
+            step.label ? '<span class="sb-lbl">' + esc(step.label) + '</span>' : '',
+          '</div>',
+          step.message ? '<div class="sb-msg">' + esc(step.message) + '</div>' : '',
+          step.selector ? '<div class="sb-sel">' + esc(step.selector) + '</div>' : '',
+        '</div>',
+        '<div class="sb-actions">',
+          '<button class="btn-ghost-sm" onclick="event.stopPropagation();moveStep(\'' + step.id + '\',-1)" ' + (i===0?'disabled':'') + '>▲</button>',
+          '<button class="btn-ghost-sm" onclick="event.stopPropagation();moveStep(\'' + step.id + '\',1)" ' + (i===steps.length-1?'disabled':'') + '>▼</button>',
+          '<button class="btn-danger-ghost" onclick="event.stopPropagation();deleteStep(\'' + step.id + '\')">✕</button>',
+        '</div>',
+      '</div>'
+    ].join('')
+
+    inner.appendChild(block)
+
+    if (i < steps.length - 1) {
+      var conn = document.createElement('div')
+      conn.className = 'connector'
+      conn.innerHTML = '<div class="line"></div><span>↓</span><div class="line"></div>'
+      inner.appendChild(conn)
+    }
+  })
+}
+
+// ─── Render Editor ────────────────────────────────────────
+function renderEditor() {
+  var empty = document.getElementById('editor-empty')
+  var body = document.getElementById('editor-body')
+  var step = steps.find(function(s){ return s.id === selectedId })
+
+  if (!step) {
+    empty.style.display = 'flex'
+    body.style.display = 'none'
+    return
+  }
+
+  empty.style.display = 'none'
+  body.style.display = 'flex'
+
+  document.getElementById('ed-label').value = step.label || ''
+  document.getElementById('ed-message').value = step.message || ''
+  document.getElementById('ed-selector').value = step.selector || ''
+
+  var needsSel = TYPE_CONFIG[step.type].needsSel
+  document.getElementById('ed-selector-field').style.display = needsSel ? 'flex' : 'none'
+}
+
+// ─── Preview ──────────────────────────────────────────────
+function togglePreviewPane() {
+  var pane = document.getElementById('preview-pane')
+  var btn = document.getElementById('preview-toggle-btn')
+  var visible = pane.style.display === 'flex'
+  pane.style.display = visible ? 'none' : 'flex'
+  btn.classList.toggle('btn-active', !visible)
+}
+function openPreview() {
+  previewIndex = 0
+  renderPreview()
+  document.getElementById('preview-modal').style.display = 'flex'
+}
+function closePreview() {
+  document.getElementById('preview-modal').style.display = 'none'
+}
+function previewPrev() { if (previewIndex > 0) { previewIndex--; renderPreview() } }
+function previewNext() {
+  if (previewIndex < steps.length - 1) { previewIndex++; renderPreview() }
+  else closePreview()
+}
+function renderPreview() {
+  var total = steps.length
+  if (total === 0) {
+    document.getElementById('preview-chat').innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px">ステップがありません</p>'
+    document.getElementById('preview-counter').textContent = ''
+    document.getElementById('preview-progress-bar').style.width = '0%'
+    return
+  }
+  var step = steps[previewIndex]
+  var isWaiting = step.type === 'wait-click' || step.type === 'wait-input'
+
+  document.getElementById('preview-counter').textContent = (previewIndex + 1) + ' / ' + total
+  document.getElementById('preview-progress-bar').style.width = ((previewIndex + 1) / total * 100) + '%'
+  document.getElementById('preview-prev').disabled = previewIndex === 0
+  document.getElementById('preview-next').textContent = previewIndex === total - 1 ? '完了 ✓' : '次へ →'
+
+  var waitMsg = ''
+  if (isWaiting) {
+    waitMsg = '<div class="chat-wait">' + (step.type === 'wait-click' ? '👆 要素をクリックしてください（プレビューでは次へで進めます）' : '⌨️ 入力してください（プレビューでは次へで進めます）') + '</div>'
+  }
+
+  document.getElementById('preview-chat').innerHTML = [
+    '<div class="chat-row">',
+      '<div class="chat-avatar">ガイド</div>',
+      '<div class="chat-bubble">',
+        '<div class="chat-msg">' + esc(step.message || '（メッセージ未設定）') + '</div>',
+        step.selector ? '<div class="chat-sel">対象: ' + esc(step.selector) + '</div>' : '',
+      '</div>',
+    '</div>',
+    waitMsg
+  ].join('')
+}
+
+// ─── Export ───────────────────────────────────────────────
+function openExport() {
+  var name = document.getElementById('tutorial-name').value
+  var tutorial = { id: 'tutorial-1', name: name, description: '', steps: steps }
+  var json = JSON.stringify(tutorial, null, 2)
+
+  var playerCode = document.getElementById('tp-player-source').textContent.trim()
+
+  var embed = '<!-- チュートリアルPlayer（インライン） -->\n<script>\n' + playerCode + '\n<\/script>\n\n<!-- チュートリアル定義 -->\n<script>\nTutorialPlayer.init(' + json + ');\n<\/script>'
+
+  document.getElementById('json-code').textContent = json
+  document.getElementById('embed-code').textContent = embed
+
+  switchTab('embed')
+  document.getElementById('export-modal').style.display = 'flex'
+}
+function closeExport() { document.getElementById('export-modal').style.display = 'none' }
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(function(t, i) {
+    var names = ['embed', 'json']
+    t.classList.toggle('active', names[i] === name)
+  })
+  document.getElementById('tab-embed').classList.toggle('active', name === 'embed')
+  document.getElementById('tab-json').classList.toggle('active', name === 'json')
+}
+function copyCode(id) {
+  var text = document.getElementById(id).textContent
+  navigator.clipboard.writeText(text).then(function() {
+    alert('コピーしました！')
+  })
+}
+
+// ─── HTML Analyzer ────────────────────────────────────────
+function openAnalyzer() {
+  if (loadedHtml) {
+    document.getElementById('analyzer-html').value = loadedHtml
+  }
+  document.getElementById('analyzer-modal').style.display = 'flex'
+}
+function closeAnalyzer() { document.getElementById('analyzer-modal').style.display = 'none' }
+function openAnalyzerFile() {
+  var input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.html'
+  input.onchange = function(e) {
+    var file = e.target.files[0]
+    if (!file) return
+    var reader = new FileReader()
+    reader.onload = function(ev) {
+      document.getElementById('analyzer-html').value = ev.target.result
+    }
+    reader.readAsText(file)
+  }
+  input.click()
+}
+
+function runAnalyzer() {
+  var html = document.getElementById('analyzer-html').value
+  if (!html.trim()) return
+
+  var parser = new DOMParser()
+  var doc = parser.parseFromString(html, 'text/html')
+  var targets = doc.querySelectorAll("button, input, select, textarea, a[href], [role='button']")
+  var results = []
+
+  targets.forEach(function(el) {
+    var sel = buildSelectorFromEl(el)
+    var tag = el.tagName.toLowerCase()
+    var inputType = el.getAttribute('type') || ''
+    var text = (el.textContent || '').trim().slice(0, 40)
+      || el.getAttribute('placeholder')
+      || el.getAttribute('aria-label')
+      || el.getAttribute('name')
+      || el.getAttribute('value')
+      || '(テキストなし)'
+    var tagLabel = inputType ? tag + '[type=' + inputType + ']' : tag
+    results.push({ tag: tagLabel, text: text, selector: sel })
+  })
+
+  var statusEl = document.getElementById('analyzer-status')
+  var resultsEl = document.getElementById('analyzer-results')
+
+  if (results.length === 0) {
+    statusEl.textContent = 'インタラクティブな要素が見つかりませんでした'
+    resultsEl.innerHTML = ''
+    return
+  }
+
+  statusEl.textContent = results.length + ' 件の要素が見つかりました — クリックでセレクタを現在のステップに挿入'
+  resultsEl.innerHTML = results.map(function(r) {
+    return [
+      '<div class="el-row" onclick="useSelector(\'' + r.selector.replace(/'/g, "\\'") + '\')">',
+        '<span class="el-tag">' + esc(r.tag) + '</span>',
+        '<div class="el-text">',
+          '<div class="el-label">' + esc(r.text) + '</div>',
+          '<div class="el-sel">' + esc(r.selector) + '</div>',
+        '</div>',
+        '<span class="el-use">→ 使う</span>',
+      '</div>'
+    ].join('')
+  }).join('')
+}
+
+function buildSelectorFromEl(el) {
+  if (el.id) return '#' + el.id
+  var name = el.getAttribute('name')
+  if (name) return '[name="' + name + '"]'
+
+  var parts = []
+  var cur = el
+  while (cur && cur.tagName && cur.tagName.toLowerCase() !== 'body') {
+    var tag = cur.tagName.toLowerCase()
+    if (cur.id) { parts.unshift('#' + cur.id); break }
+    var siblings = Array.prototype.filter.call(cur.parentElement ? cur.parentElement.children : [], function(c) { return c.tagName === cur.tagName })
+    if (siblings.length > 1) {
+      var idx = siblings.indexOf(cur) + 1
+      parts.unshift(tag + ':nth-of-type(' + idx + ')')
+    } else {
+      parts.unshift(tag)
+    }
+    cur = cur.parentElement
+  }
+  return parts.join(' > ')
+}
+
+function useSelector(selector) {
+  var step = steps.find(function(s){ return s.id === selectedId })
+  if (!step) {
+    alert('先にステップを選択してください')
+    return
+  }
+  step.selector = selector
+  document.getElementById('ed-selector').value = selector
+  renderChain()
+  closeAnalyzer()
+}
+
+// ─── Utils ────────────────────────────────────────────────
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+// ─── Preview Pane ─────────────────────────────────────────
+function openPreviewFile() {
+  document.getElementById('preview-file-input').click()
+}
+
+function onPreviewFileSelected(event) {
+  var files = Array.from(event.target.files)
+  if (!files.length) return
+  var htmlFile = files.find(function(f) { return /\.html?$/i.test(f.name) })
+  var cssFiles = files.filter(function(f) { return /\.css$/i.test(f.name) })
+  if (!htmlFile) return
+
+  // 古いBlob URLを解放して新しいものを作成
+  cssObjectURLs.forEach(function(url) { URL.revokeObjectURL(url) })
+  cssObjectURLs = []
+  var cssMap = {}
+  cssFiles.forEach(function(cssFile) {
+    var url = URL.createObjectURL(cssFile)
+    cssObjectURLs.push(url)
+    cssMap[cssFile.name] = url
+  })
+
+  var reader = new FileReader()
+  reader.onload = function(e) {
+    var html = e.target.result
+
+    // <link href="..."> の相対パスをBlob URLに差し替え
+    if (cssFiles.length > 0) {
+      html = html.replace(/<link([^>]*?)href=(["'])([^"']*?)\2([^>]*?)>/gi, function(match, before, quote, href, after) {
+        var filename = href.split('/').pop().split('?')[0]
+        if (cssMap[filename]) {
+          return '<link' + before + 'href=' + quote + cssMap[filename] + quote + after + '>'
+        }
+        return match
+      })
+    }
+
+    var playerCode = document.getElementById('tp-player-source').textContent.trim()
+    var injection = '<script>\n' + playerCode + '\n\nwindow.addEventListener(\'message\', function(e) {\n  if (!e.data || e.data.type !== \'tp-update\') return;\n  if (window.TutorialPlayer) {\n    window.TutorialPlayer.init(e.data.config);\n  }\n});\n<\/script>'
+    var modified = html.replace(/<\/body>/i, injection + '\n</body>')
+    if (modified === html) { modified = html + injection }
+    loadedHtml = modified
+    var iframe = document.getElementById('preview-frame')
+    iframe.srcdoc = loadedHtml
+    document.getElementById('preview-empty').style.display = 'none'
+    var label = htmlFile.name + (cssFiles.length ? ' +' + cssFiles.length + 'CSS' : '')
+    document.getElementById('preview-filename').textContent = label
+    document.getElementById('preview-filename').style.display = 'inline'
+    document.getElementById('preview-reset-btn').style.display = 'inline-flex'
+    event.target.value = ''
+    setTimeout(updatePreview, 600)
+  }
+  reader.readAsText(htmlFile)
+}
+
+function resetPreviewFrame() {
+  if (!loadedHtml) return
+  var iframe = document.getElementById('preview-frame')
+  iframe.srcdoc = ''
+  setTimeout(function() {
+    iframe.srcdoc = loadedHtml
+    setTimeout(updatePreview, 600)
+  }, 50)
+}
+
+function updatePreview() {
+  if (!loadedHtml) return
+  var iframe = document.getElementById('preview-frame')
+  if (!iframe || !iframe.contentWindow) return
+  var name = document.getElementById('tutorial-name').value
+  iframe.contentWindow.postMessage({
+    type: 'tp-update',
+    config: { id: 'tutorial-1', name: name, description: '', steps: steps }
+  }, '*')
+}
+
+function debounce(fn, delay) {
+  return function() {
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(fn, delay)
+  }
+}
+var debouncedUpdatePreview = debounce(function(){ updatePreview(); autoSave(); }, 300)
+
+// ─── Preview Pane Resize ──────────────────────────────────
+;(function() {
+  var handle = document.getElementById('preview-resize-handle')
+  var pane   = document.getElementById('preview-pane')
+  var dragging = false, startX = 0
+
+  handle.addEventListener('mousedown', function(e) {
+    if (pane.style.display === 'none') return
+    dragging = true
+    startX = pane.getBoundingClientRect().left
+    handle.classList.add('dragging')
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+    document.getElementById('preview-frame').style.pointerEvents = 'none'
+    e.preventDefault()
+  })
+
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return
+    var w = Math.max(200, Math.min(e.clientX - startX, window.innerWidth - 560))
+    pane.style.width = w + 'px'
+  })
+
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return
+    dragging = false
+    handle.classList.remove('dragging')
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
+    document.getElementById('preview-frame').style.pointerEvents = ''
+  })
+})()
+
+// ─── App Init ────────────────────────────────────────────
+;(function() {
+  var projects = loadProjects()
+  var lastId = localStorage.getItem('tm_last_project_id')
+  var lastProject = lastId ? projects.find(function(p){ return p.id === lastId }) : null
+  if (lastProject) {
+    showEditor(lastProject)
+  } else {
+    renderProjectList()
+  }
+})()
+</script>
+
+<script type="text/plain" id="tp-player-source">
+(function () {
+  'use strict';
+
+  var config = null;
+  var currentIndex = 0;
+  var tooltipEl = null;
+  var styleEl = null;
+  var overlayEls = [];
+  var stepListeners = [];
+  var skipTimer = null;
+  var currentTargetEl = null;
+
+  // ----------------------------------------------------------------
+  // Styles
+  // ----------------------------------------------------------------
+  function injectStyles() {
+    styleEl = document.createElement('style');
+    styleEl.setAttribute('data-tp', '1');
+    styleEl.textContent = [
+      '.tp-tooltip {',
+      '  position: fixed;',
+      '  z-index: 99999;',
+      '  width: 320px;',
+      '  background: #fff;',
+      '  border-radius: 12px;',
+      '  box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);',
+      '  padding: 0;',
+      '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;',
+      '  font-size: 14px;',
+      '  color: #1a1a1a;',
+      '  opacity: 1;',
+      '  transition: opacity 200ms ease;',
+      '  pointer-events: all;',
+      '}',
+      '.tp-tooltip.tp-fade-out { opacity: 0 !important; transition: opacity 150ms ease; }',
+      '.tp-header {',
+      '  display: flex;',
+      '  align-items: center;',
+      '  gap: 8px;',
+      '  padding: 14px 14px 10px;',
+      '  border-bottom: 1px solid #f0f0f0;',
+      '}',
+      '.tp-avatar {',
+      '  width: 28px;',
+      '  height: 28px;',
+      '  border-radius: 50%;',
+      '  background: #3b82f6;',
+      '  flex-shrink: 0;',
+      '  display: flex;',
+      '  align-items: center;',
+      '  justify-content: center;',
+      '  color: #fff;',
+      '  font-size: 13px;',
+      '  font-weight: 700;',
+      '}',
+      '.tp-title {',
+      '  flex: 1;',
+      '  font-weight: 600;',
+      '  font-size: 13px;',
+      '  color: #374151;',
+      '  overflow: hidden;',
+      '  text-overflow: ellipsis;',
+      '  white-space: nowrap;',
+      '}',
+      '.tp-close {',
+      '  background: none;',
+      '  border: none;',
+      '  cursor: pointer;',
+      '  color: #9ca3af;',
+      '  font-size: 16px;',
+      '  padding: 0 2px;',
+      '  line-height: 1;',
+      '  flex-shrink: 0;',
+      '}',
+      '.tp-close:hover { color: #374151; }',
+      '.tp-body {',
+      '  padding: 14px 16px;',
+      '  line-height: 1.6;',
+      '  color: #374151;',
+      '  font-size: 14px;',
+      '}',
+      '.tp-footer {',
+      '  padding: 10px 16px 14px;',
+      '  border-top: 1px solid #f0f0f0;',
+      '  display: flex;',
+      '  flex-direction: column;',
+      '  gap: 8px;',
+      '}',
+      '.tp-progress-row {',
+      '  display: flex;',
+      '  align-items: center;',
+      '  gap: 8px;',
+      '}',
+      '.tp-progress-text {',
+      '  font-size: 12px;',
+      '  color: #9ca3af;',
+      '  white-space: nowrap;',
+      '}',
+      '.tp-progress-bar {',
+      '  flex: 1;',
+      '  height: 4px;',
+      '  background: #e5e7eb;',
+      '  border-radius: 2px;',
+      '  overflow: hidden;',
+      '}',
+      '.tp-progress-fill {',
+      '  height: 100%;',
+      '  background: #3b82f6;',
+      '  border-radius: 2px;',
+      '  transition: width 200ms ease;',
+      '}',
+      '.tp-actions { display: flex; justify-content: flex-end; }',
+      '.tp-next {',
+      '  background: #3b82f6;',
+      '  color: #fff;',
+      '  border: none;',
+      '  border-radius: 6px;',
+      '  padding: 7px 18px;',
+      '  font-size: 13px;',
+      '  font-weight: 600;',
+      '  cursor: pointer;',
+      '}',
+      '.tp-next:hover { background: #2563eb; }',
+      '.tp-skip {',
+      '  background: none;',
+      '  color: #6b7280;',
+      '  border: 1px solid #d1d5db;',
+      '  border-radius: 6px;',
+      '  padding: 7px 18px;',
+      '  font-size: 13px;',
+      '  font-weight: 500;',
+      '  cursor: pointer;',
+      '}',
+      '.tp-skip:hover { background: #f3f4f6; }',
+      '.tp-hint {',
+      '  font-size: 12px;',
+      '  color: #6b7280;',
+      '  text-align: right;',
+      '}',
+      '.tp-overlay-piece {',
+      '  position: fixed;',
+      '  background: rgba(0,0,0,0.5);',
+      '  z-index: 99998;',
+      '  pointer-events: none;',
+      '}',
+      '.tp-highlighted {',
+      '  outline: 2px solid #3b82f6 !important;',
+      '  outline-offset: 2px !important;',
+      '  position: relative;',
+      '}',
+      '@media (max-width: 480px) {',
+      '  .tp-tooltip {',
+      '    width: calc(100vw - 24px);',
+      '    left: 12px !important;',
+      '    right: 12px !important;',
+      '    bottom: 16px !important;',
+      '    top: auto !important;',
+      '    transform: none !important;',
+      '  }',
+      '}'
+    ].join('\n');
+    document.head.appendChild(styleEl);
+  }
+
+  // ----------------------------------------------------------------
+  // Overlay (4-piece spotlight)
+  // ----------------------------------------------------------------
+  function showOverlay(el) {
+    hideOverlay();
+    var rect = el.getBoundingClientRect();
+    var pad = 6;
+    var top = rect.top - pad;
+    var left = rect.left - pad;
+    var right = rect.right + pad;
+    var bottom = rect.bottom + pad;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+
+    var pieces = [
+      { top: 0, left: 0, width: vw, height: Math.max(0, top) },
+      { top: Math.min(vh, bottom), left: 0, width: vw, height: Math.max(0, vh - bottom) },
+      { top: Math.max(0, top), left: 0, width: Math.max(0, left), height: Math.max(0, bottom - top) },
+      { top: Math.max(0, top), left: Math.min(vw, right), width: Math.max(0, vw - right), height: Math.max(0, bottom - top) }
+    ];
+
+    pieces.forEach(function (p) {
+      var div = document.createElement('div');
+      div.className = 'tp-overlay-piece';
+      div.style.top = p.top + 'px';
+      div.style.left = p.left + 'px';
+      div.style.width = p.width + 'px';
+      div.style.height = p.height + 'px';
+      document.body.appendChild(div);
+      overlayEls.push(div);
+    });
+
+    el.classList.add('tp-highlighted');
+    currentTargetEl = el;
+  }
+
+  function hideOverlay() {
+    overlayEls.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
+    overlayEls = [];
+    if (currentTargetEl) {
+      currentTargetEl.classList.remove('tp-highlighted');
+      currentTargetEl = null;
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Tooltip DOM
+  // ----------------------------------------------------------------
+  function buildUI() {
+    tooltipEl = document.createElement('div');
+    tooltipEl.className = 'tp-tooltip';
+    tooltipEl.style.opacity = '0';
+    document.body.appendChild(tooltipEl);
+  }
+
+  function renderStep(step, index) {
+    var total = config.steps.length;
+    var pct = Math.round(((index + 1) / total) * 100);
+    var isWait = step.type === 'wait-click' || step.type === 'wait-input';
+
+    var actionsHtml = isWait
+      ? '<span class="tp-hint" id="tp-hint-text">' + getHintText(step.type) + '</span>'
+      : '<button class="tp-next" id="tp-next-btn">次へ</button>';
+
+    tooltipEl.innerHTML =
+      '<div class="tp-header">' +
+        '<span class="tp-avatar">G</span>' +
+        '<span class="tp-title">' + escapeHtml(config.name || 'ガイド') + '</span>' +
+        '<button class="tp-close" id="tp-close-btn">✕</button>' +
+      '</div>' +
+      '<div class="tp-body">' + escapeHtml(step.message || '') + '</div>' +
+      '<div class="tp-footer">' +
+        '<div class="tp-progress-row">' +
+          '<span class="tp-progress-text">' + (index + 1) + ' / ' + total + '</span>' +
+          '<div class="tp-progress-bar"><div class="tp-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="tp-actions">' + actionsHtml + '</div>' +
+      '</div>';
+
+    document.getElementById('tp-close-btn').addEventListener('click', cleanup);
+    var nextBtn = document.getElementById('tp-next-btn');
+    if (nextBtn) nextBtn.addEventListener('click', function () { nextStep(); });
+  }
+
+  function getHintText(type) {
+    return type === 'wait-click' ? 'クリックして進んでください' : '入力して進んでください（Enterまたはフォーカスを外す）';
+  }
+
+  function showSkipButton() {
+    var actionsEl = tooltipEl && tooltipEl.querySelector('.tp-actions');
+    if (!actionsEl) return;
+    actionsEl.innerHTML = '<button class="tp-skip" id="tp-skip-btn">スキップ</button>';
+    document.getElementById('tp-skip-btn').addEventListener('click', function () {
+      detachStepListeners();
+      clearSkipTimer();
+      nextStep();
+    });
+  }
+
+  // ----------------------------------------------------------------
+  // Positioning
+  // ----------------------------------------------------------------
+  function positionTooltip(el) {
+    if (!tooltipEl) return;
+
+    if (window.innerWidth <= 480) {
+      tooltipEl.style.bottom = '16px';
+      tooltipEl.style.left = '12px';
+      tooltipEl.style.top = 'auto';
+      tooltipEl.style.right = '12px';
+      tooltipEl.style.transform = 'none';
+      return;
+    }
+
+    var rect = el.getBoundingClientRect();
+    var tw = 320;
+    var th = tooltipEl.offsetHeight || 160;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var gap = 12;
+
+    var positions = [
+      { top: rect.bottom + gap, left: rect.left + rect.width / 2 - tw / 2 },
+      { top: rect.top - th - gap, left: rect.left + rect.width / 2 - tw / 2 },
+      { top: rect.top + rect.height / 2 - th / 2, left: rect.right + gap },
+      { top: rect.top + rect.height / 2 - th / 2, left: rect.left - tw - gap }
+    ];
+
+    var chosen = positions[0];
+    for (var i = 0; i < positions.length; i++) {
+      var p = positions[i];
+      if (p.top >= 0 && p.top + th <= vh && p.left >= 0 && p.left + tw <= vw) {
+        chosen = p;
+        break;
+      }
+    }
+
+    chosen.left = Math.max(8, Math.min(vw - tw - 8, chosen.left));
+    chosen.top = Math.max(8, Math.min(vh - th - 8, chosen.top));
+
+    tooltipEl.style.top = chosen.top + 'px';
+    tooltipEl.style.left = chosen.left + 'px';
+    tooltipEl.style.bottom = 'auto';
+    tooltipEl.style.right = 'auto';
+    tooltipEl.style.transform = 'none';
+  }
+
+  function positionCenter() {
+    if (!tooltipEl) return;
+    tooltipEl.style.bottom = '32px';
+    tooltipEl.style.left = '50%';
+    tooltipEl.style.top = 'auto';
+    tooltipEl.style.right = 'auto';
+    tooltipEl.style.transform = 'translateX(-50%)';
+  }
+
+  // ----------------------------------------------------------------
+  // Step listeners
+  // ----------------------------------------------------------------
+  function attachStepListeners(step, el) {
+    if (step.type === 'wait-click') {
+      var handler = function () {
+        detachStepListeners();
+        clearSkipTimer();
+        nextStep();
+      };
+      el.addEventListener('click', handler);
+      stepListeners.push({ el: el, type: 'click', handler: handler });
+    } else if (step.type === 'wait-input') {
+      var blurHandler = function () {
+        detachStepListeners();
+        clearSkipTimer();
+        nextStep();
+      };
+      var keyHandler = function (e) {
+        if (e.key === 'Enter') {
+          detachStepListeners();
+          clearSkipTimer();
+          nextStep();
+        }
+      };
+      el.addEventListener('blur', blurHandler);
+      el.addEventListener('keydown', keyHandler);
+      stepListeners.push({ el: el, type: 'blur', handler: blurHandler });
+      stepListeners.push({ el: el, type: 'keydown', handler: keyHandler });
+    }
+  }
+
+  function detachStepListeners() {
+    stepListeners.forEach(function (l) {
+      l.el.removeEventListener(l.type, l.handler);
+    });
+    stepListeners = [];
+  }
+
+  // ----------------------------------------------------------------
+  // Skip timer
+  // ----------------------------------------------------------------
+  function startSkipTimer() {
+    clearSkipTimer();
+    skipTimer = setTimeout(function () {
+      showSkipButton();
+    }, 5000);
+  }
+
+  function clearSkipTimer() {
+    if (skipTimer !== null) {
+      clearTimeout(skipTimer);
+      skipTimer = null;
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Fade helpers
+  // ----------------------------------------------------------------
+  function fadeIn() {
+    if (!tooltipEl) return;
+    tooltipEl.style.opacity = '0';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (tooltipEl) tooltipEl.style.opacity = '1';
+      });
+    });
+  }
+
+  function fadeOut(cb) {
+    if (!tooltipEl) { cb && cb(); return; }
+    tooltipEl.classList.add('tp-fade-out');
+    setTimeout(function () {
+      tooltipEl && tooltipEl.classList.remove('tp-fade-out');
+      cb && cb();
+    }, 150);
+  }
+
+  // ----------------------------------------------------------------
+  // Core
+  // ----------------------------------------------------------------
+  function showStep(index) {
+    detachStepListeners();
+    clearSkipTimer();
+    hideOverlay();
+
+    if (index >= config.steps.length) {
+      cleanup();
+      return;
+    }
+
+    var step = config.steps[index];
+    currentIndex = index;
+
+    var el = null;
+    if (step.selector) {
+      el = document.querySelector(step.selector);
+      if (!el) {
+        console.warn('[TutorialPlayer] selector not found: ' + step.selector + ' — skipping step ' + index);
+        showStep(index + 1);
+        return;
+      }
+    }
+
+    function render() {
+      renderStep(step, index);
+
+      if (el) {
+        scrollToElement(el);
+        showOverlay(el);
+        setTimeout(function () { positionTooltip(el); }, 80);
+      } else {
+        positionCenter();
+      }
+
+      if (step.type === 'wait-click' || step.type === 'wait-input') {
+        attachStepListeners(step, el);
+        startSkipTimer();
+      }
+
+      fadeIn();
+    }
+
+    if (tooltipEl.style.opacity !== '0' && parseFloat(tooltipEl.style.opacity) > 0) {
+      fadeOut(render);
+    } else {
+      render();
+    }
+  }
+
+  function nextStep() {
+    showStep(currentIndex + 1);
+  }
+
+  function scrollToElement(el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ----------------------------------------------------------------
+  // Cleanup
+  // ----------------------------------------------------------------
+  function cleanup() {
+    detachStepListeners();
+    clearSkipTimer();
+    hideOverlay();
+
+    if (tooltipEl && tooltipEl.parentNode) {
+      tooltipEl.parentNode.removeChild(tooltipEl);
+    }
+    tooltipEl = null;
+
+    if (styleEl && styleEl.parentNode) {
+      styleEl.parentNode.removeChild(styleEl);
+    }
+    styleEl = null;
+
+    config = null;
+    currentIndex = 0;
+    stepListeners = [];
+    overlayEls = [];
+    skipTimer = null;
+    currentTargetEl = null;
+  }
+
+  // ----------------------------------------------------------------
+  // Utilities
+  // ----------------------------------------------------------------
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ----------------------------------------------------------------
+  // Public API
+  // ----------------------------------------------------------------
+  function init(cfg) {
+    if (!cfg || !Array.isArray(cfg.steps) || cfg.steps.length === 0) {
+      console.warn('[TutorialPlayer] invalid config');
+      return;
+    }
+    if (config) cleanup();
+
+    config = cfg;
+    currentIndex = 0;
+
+    injectStyles();
+    buildUI();
+    showStep(0);
+  }
+
+  window.TutorialPlayer = { init: init };
+}());
+</script>
+</body>
+</html>
